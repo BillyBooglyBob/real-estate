@@ -1,0 +1,61 @@
+real estate application
+- home page with search bar
+    - massive search bar in the middle
+    - big house image as the background
+- sign up page
+    - username
+    - email
+    - password
+    - sign up
+- sign in page
+    - username/email
+    - password
+    - sign in
+    - don't have an account? 
+        - redirect to sign up
+- list page with all homes
+    - two houses per row
+    - search functionality on the top
+- create listing
+    - must be authorised to access
+    - details
+        - same as below
+        - number for enquiry
+- header
+    - profile on the right
+        - expand on click for create listing button
+            - check global user ? create listing : sign up
+        - if sign in -> sign out
+        - if sign out -> sign in
+
+track user login status
+- is user authorised
+- redux global state
+    - prevent repetitive API calls by saving to local state
+
+save all listings to DB
+- MongoDB
+- property images
+    - save using firebase
+- details
+    - type
+        - buy
+        - rent
+    - address
+    - price
+        - total (buy)
+        - per week (rent)
+    - specs
+        - # rooms
+        - # bathrooms
+        - # parking
+        - area (m^2)
+- enquire button
+    - pop up with a number to call
+
+
+
+
+
+sign in page
+- specific error thrown 
