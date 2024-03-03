@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { LOGIN } from "../redux/user";
 
 export const SignIn = () => {
   const [formData, setFormData] = useState({});
@@ -9,6 +11,7 @@ export const SignIn = () => {
   // disable submit button if loading
   const [loading, setLoading] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -16,16 +19,20 @@ export const SignIn = () => {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
+    // reset error and start loading when there is a new sign in attempt
     setError(null);
     setLoading(true);
 
     try {
       const res = await axios.post("/api/auth/sign-in", formData);
-      console.log(res.data);
+      // save data to global state
+      dispatch(LOGIN(res.data));
+      
       setLoading(null);
+
+      // navigate back to homepage if successful
       navigate("/");
     } catch (error) {
-      console.log(error);
       setError(error.response.data.error);
       setLoading(null);
     }
