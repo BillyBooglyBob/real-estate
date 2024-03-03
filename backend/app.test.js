@@ -1,10 +1,13 @@
 import request from 'supertest'
 import createServer from './utils/server'
-import User from './models/user.model'
 import { jest } from '@jest/globals'
+import User from './models/user.model'
 import validator from 'validator'
 
 const app = createServer()
+
+// used by the createToken method for jwt encryption
+process.env.SECRET = 'abcd'
 
 describe('Real estate API', () => {
     describe('POST /sign-up', () => {
@@ -22,7 +25,14 @@ describe('Real estate API', () => {
             if (!validator.isStrongPassword(password)) {
                 throw Error(`Your password is not strong enough`)
             }
+
+            const newUser = {
+                _id: 12334
+            }
+            console.log(newUser._id)
+            return newUser
         });
+
         it('return 201 status code and email when valid signup data inputted', async () => {
             const userData = {
                 username: 'James',
@@ -33,7 +43,7 @@ describe('Real estate API', () => {
             const res = await request(app)
                 .post('/api/auth/sign-up')
                 .send(userData)
-
+            
             expect(res.status).toBe(201)
             expect(res.body).toEqual({ email: userData.email })
         })

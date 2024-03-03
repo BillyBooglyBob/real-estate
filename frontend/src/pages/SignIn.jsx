@@ -22,12 +22,12 @@ export const SignIn = () => {
     try {
       const res = await axios.post("/api/auth/sign-in", formData);
       console.log(res.data);
-      setLoading(null)
-      navigate('/home')
+      setLoading(null);
+      navigate("/");
     } catch (error) {
       console.log(error);
       setError(error.response.data.error);
-      setLoading(null)
+      setLoading(null);
     }
   };
 
@@ -53,10 +53,15 @@ export const SignIn = () => {
             id="password"
             onChange={handleChange}
           />
-          <button disabled={loading} className="bg-red-600 hover:bg-red-700 text-white rounded-lg p-2">
+          <button
+            disabled={loading}
+            className="bg-red-600 hover:bg-red-700 text-white rounded-lg p-2"
+          >
             SIGN IN
           </button>
-          {error && <div>{error}</div>}
+          {error && (
+            <div className=" bg-red-400 p-2 rounded-lg text-white">{error}</div>
+          )}
         </form>
         <div>
           Don't have an account?{" "}

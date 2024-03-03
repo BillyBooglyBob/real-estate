@@ -65,15 +65,18 @@ userSchema.statics.signin = async function (email, password) {
         throw Error('All fields must be filled')
     }
 
-    const user = this.findOne({ email })
+    const user = await this.findOne({ email })
     if (!user) {
         throw Error('Incorrect email')
     }
 
-    const match = await bcryptjs.compare(password, user.password)
+    const match = bcryptjs.compareSync(password, user.password)
+
     if (!match) {
         throw Error('Incorrect password')
     }
+
+    return user
 }
 
 const User = mongoose.model('User', userSchema)
