@@ -24,7 +24,6 @@ export const SignUp = () => {
       setLoading(null);
       navigate("/sign-in");
     } catch (error) {
-      console.log(error);
       setError(error.response.data.error);
       setLoading(null);
     }
