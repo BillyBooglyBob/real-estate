@@ -22,7 +22,7 @@ export const signin = async (req, res) => {
         const token = createToken(newUser._id)
 
         res
-            .status(201)
+            .status(200)
             .cookie('token', token, { httpOnly: true })
             .json({ email: email })
     } catch (error) {

@@ -139,7 +139,7 @@ describe('Real estate API', () => {
             return newUser
         });
 
-        it('return 201 status code and email when valid signin data inputted', async () => {
+        it('return 200 status code and email when valid signin data inputted', async () => {
             const userData = {
                 email: '1@gmail.com',
                 password: 'abcABC1/'
@@ -149,7 +149,7 @@ describe('Real estate API', () => {
                 .post('/api/auth/sign-in')
                 .send(userData)
 
-            expect(res.status).toBe(201)
+            expect(res.status).toBe(200)
             expect(res.body).toEqual({ email: userData.email })
         })
 
@@ -208,6 +208,15 @@ describe('Real estate API', () => {
                 expect(res.status).toBe(400)
                 expect(res.body).toEqual({ error: "All fields must be filled" })
             }
+        })
+    })
+
+    describe('GET /sign-out', () => {
+        it('return 200 status code and email when valid signup data inputted', async () => {
+            const res = await request(app)
+                .get('/api/auth/sign-out')
+
+            expect(res.status).toBe(200)
         })
     })
 })
