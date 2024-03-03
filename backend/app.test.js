@@ -29,7 +29,7 @@ describe('Real estate API', () => {
             const newUser = {
                 _id: 12334
             }
-            console.log(newUser._id)
+
             return newUser
         });
 
@@ -43,7 +43,7 @@ describe('Real estate API', () => {
             const res = await request(app)
                 .post('/api/auth/sign-up')
                 .send(userData)
-            
+
             expect(res.status).toBe(201)
             expect(res.body).toEqual({ email: userData.email })
         })
@@ -100,6 +100,111 @@ describe('Real estate API', () => {
 
             for (const user of userData) {
                 const res = await request(app).post('/api/auth/sign-up').send(user)
+                expect(res.status).toBe(400)
+                expect(res.body).toEqual({ error: "All fields must be filled" })
+            }
+        })
+    })
+
+    describe('POST /sign-in', () => {
+        // mock database function
+        const availableUsers = [
+            {
+                email: '1@gmail.com',
+                password: 'abcABC1/'
+            }
+        ]
+
+        const userExists = (email, password) => {
+            return availableUsers.some(user => user.email === email && user.password === password)
+        }
+
+        User.signin = jest.fn(async (email, password) => {
+            // validate input fields
+            // console.log(email)
+            // console.log(password)
+
+            if (!email || !password) {
+                throw Error("All fields must be filled")
+            }
+
+            if (!userExists(email, password)) {
+                throw Error("Wrong credentials")
+            }
+
+            const newUser = {
+                _id: 12334
+            }
+
+            return newUser
+        });
+
+        it('return 201 status code and email when valid signin data inputted', async () => {
+            const userData = {
+                email: '1@gmail.com',
+                password: 'abcABC1/'
+            }
+
+            const res = await request(app)
+                .post('/api/auth/sign-in')
+                .send(userData)
+
+            expect(res.status).toBe(201)
+            expect(res.body).toEqual({ email: userData.email })
+        })
+
+        it('400 status code and throw error when invalid email inputted', async () => {
+            const userData = [
+                {
+                    email: '2@gmail.com',
+                    password: 'abcABC1/'
+                }, {
+                    email: 'abc@gmail.com',
+                    password: 'abcABC1/'
+                }]
+
+            for (const user of userData) {
+                const res = await request(app)
+                    .post('/api/auth/sign-in')
+                    .send(user)
+
+                expect(res.status).toBe(400)
+                expect(res.body).toEqual({ error: "Wrong credentials" })
+            }
+        })
+
+        it('400 status code and throw error when wrong password inputted', async () => {
+            const userData = [
+                {
+                    email: '1@gmail.com',
+                    password: 'abc'
+                }, {
+                    email: '1@gmail.com',
+                    password: 'ABC123'
+                }, {
+                    email: '1@gmail.com',
+                    password: 'abcABC123/'
+                }]
+
+            for (const user of userData) {
+                const res = await request(app)
+                    .post('/api/auth/sign-in')
+                    .send(user)
+
+                expect(res.status).toBe(400)
+                expect(res.body).toEqual({ error: "Wrong credentials" })
+            }
+        })
+
+        it('400 status code when email, username and/or password missing', async () => {
+            const userData = [
+                { email: 'billy@gmail.com' },
+                { password: 'abcABC1/' },
+                {}
+            ]
+
+            for (const user of userData) {
+                const res = await request(app).post('/api/auth/sign-in').send(user)
                 expect(res.status).toBe(400)
                 expect(res.body).toEqual({ error: "All fields must be filled" })
             }
