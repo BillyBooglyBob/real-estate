@@ -1,7 +1,10 @@
 import { FaSearch } from "react-icons/fa";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 export const Header = () => {
+  const user = useSelector((state) => state.user.currentUser);
+
   return (
     <header className="shadow-md">
       <div className="flex justify-between items-center mx-auto p-3">
@@ -17,23 +20,34 @@ export const Header = () => {
           />
           <FaSearch className="text-slate-400" />
         </form>
-        <div className="mr-2 flex gap-1">
-          <Link to="/">
-            <button className="hidden sm:inline hover:bg-slate-300 w-20 h-12 rounded-lg">
-              Home
-            </button>
-          </Link>
-          <Link to="/about">
-            <button className="hidden sm:inline hover:bg-slate-300 w-20 h-12 rounded-lg">
-              About
-            </button>
-          </Link>
-          <Link to="/sign-in">
-            <button className="hover:bg-slate-300 w-20 h-12 rounded-lg">
-              Sign In
-            </button>
-          </Link>
-        </div>
+        <nav>
+          {user && (
+            <div className="mr-2">
+              <Link to="/profile">
+                <button>Profile</button>
+              </Link>
+            </div>
+          )}
+          {!user && (
+            <div className="mr-2 flex gap-1">
+              <Link to="/">
+                <button className="hidden sm:inline hover:bg-slate-300 w-20 h-12 rounded-lg">
+                  Home
+                </button>
+              </Link>
+              <Link to="/about">
+                <button className="hidden sm:inline hover:bg-slate-300 w-20 h-12 rounded-lg">
+                  About
+                </button>
+              </Link>
+              <Link to="/sign-in">
+                <button className="hover:bg-slate-300 w-20 h-12 rounded-lg">
+                  Sign In
+                </button>
+              </Link>
+            </div>
+          )}
+        </nav>
       </div>
     </header>
   );

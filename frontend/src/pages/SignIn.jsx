@@ -27,7 +27,7 @@ export const SignIn = () => {
       const res = await axios.post("/api/auth/sign-in", formData);
       // save data to global state
       dispatch(LOGIN(res.data));
-      
+
       setLoading(null);
 
       // navigate back to homepage if successful

@@ -29,3 +29,12 @@ export const signin = async (req, res) => {
         res.status(400).json({ error: error.message })
     }
 }
+
+export const signout = async (req, res) => {
+    try {
+        res.clearCookie('token')
+        res.status(200).json('User has been logged out')
+    } catch (error) {
+        res.status(500).json({ error: 'Cannot log out' })
+    }
+}
