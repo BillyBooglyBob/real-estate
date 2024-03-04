@@ -51,7 +51,7 @@ userSchema.statics.signup = async function (username, email, password) {
 
     const hashedPassword = bcryptjs.hashSync(password, 10)
 
-    const newUser = this.create({
+    const newUser = await this.create({
         username,
         email,
         password: hashedPassword
