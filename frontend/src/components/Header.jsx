@@ -24,7 +24,7 @@ export const Header = () => {
           {user && (
             <div className="mr-2">
               <Link to="/profile">
-                <button>Profile</button>
+                <button className="hover:bg-slate-300 w-20 h-12 rounded-lg">Profile</button>
               </Link>
             </div>
           )}
