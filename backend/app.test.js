@@ -3,6 +3,9 @@ import createServer from './utils/server'
 import { jest } from '@jest/globals'
 import User from './models/user.model'
 import validator from 'validator'
+import Listing from './models/listing.model'
+import { checkToken } from './utils/checkToken'
+import { createListing } from './controllers/listing.controller.js'
 
 const app = createServer()
 
