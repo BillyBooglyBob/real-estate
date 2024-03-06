@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken"
 
-export const checkToken = (req, res, next) => {
+export function checkToken(req, res, next) {
     const token = req.cookies.token
 
     if (!token) {
@@ -11,7 +11,7 @@ export const checkToken = (req, res, next) => {
         if (err) {
             throw Error('Forbidden')
         }
-
+        
         req.user = user
         next()
     })

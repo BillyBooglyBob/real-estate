@@ -17,7 +17,7 @@ const listingSchema = new mongoose.Schema({
     type: {
         type: String,
         required: true,
-        enum: ['Buy', 'Rent']
+        enum: ['Sell', 'Rent']
     },
     specifications: {
         rooms: {
@@ -52,12 +52,12 @@ listingSchema.statics.createNewListing = async function ({ address, description,
         throw Error('Values cannot be negative')
     }
 
-    if (type !== 'Buy' && type !== 'Rent' && type !== 'Buy/Rent') {
+    if (type !== 'Buy' && type !== 'Rent') {
         throw Error(`Invalid listing type
         Can only list for
-        - Buy
+        - Sell
         - Rent
-        - Buy/Rent`)
+        `)
     }
 
     const duplicateAddress = await this.findOne({ address })
