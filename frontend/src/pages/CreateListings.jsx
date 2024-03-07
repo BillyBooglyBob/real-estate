@@ -6,15 +6,33 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export const CreateListings = () => {
+  const navigate = useNavigate();
+
   const [listingData, setListingData] = useState({
     imageUrls: [],
+    address: "",
+    description: "",
+    price: 0,
+    type: "Sell",
+    specifications: {
+      rooms: 0,
+      bathrooms: 0,
+      parkings: 0,
+    },
   });
 
+  // state for image uploading
   const [files, setFiles] = useState([]);
   const [imageUploadError, setImageUploadError] = useState(false);
   const [uploading, setUploading] = useState(false);
+
+  // states for listing creation
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(null);
 
   const handleImageSubmit = () => {
     const length = files.length + listingData.imageUrls.length;
@@ -81,12 +99,32 @@ export const CreateListings = () => {
     });
   };
 
+  // submit data to the create listing api route
+  // catch error
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    try {
+      setLoading(true);
+      setError(false);
+
+      const res = await axios.post("/api/listings", listingData);
+      setLoading(false);
+      console.log('success')
+      console.log(res.data);
+      navigate(`/listings/${res.data._id}`)
+      // navigate to the current user listings
+    } catch (error) {
+      setError(error.response.data.error);
+      setLoading(false);
+    }
+  };
+
   console.log(listingData);
 
   return (
     <div className="max-w-3xl p-3 mx-auto">
       <h1 className="text-3xl font-bold text-center mb-3">Create listing</h1>
-      <form className="flex gap-4 flex-col sm:flex-row">
+      <form onSubmit={handleSubmit} className="flex gap-4 flex-col sm:flex-row">
         <div className="flex flex-col gap-3">
           <label className="flex flex-col">
             Address
@@ -94,6 +132,9 @@ export const CreateListings = () => {
               type="text"
               className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3"
               placeholder="Address"
+              onChange={(e) =>
+                setListingData({ ...listingData, address: e.target.value })
+              }
             />
           </label>
           <label className="flex flex-col">
@@ -102,6 +143,9 @@ export const CreateListings = () => {
               type="text"
               className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3"
               placeholder="Description"
+              onChange={(e) =>
+                setListingData({ ...listingData, description: e.target.value })
+              }
             />
           </label>
           <label className="flex flex-col">
@@ -110,12 +154,20 @@ export const CreateListings = () => {
               type="number"
               className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3"
               placeholder="$100000"
+              onChange={(e) =>
+                setListingData({ ...listingData, price: e.target.value })
+              }
             />
           </label>
           <div className="flex gap-10">
             <label className="flex flex-col">
               Listing Type
-              <select className="border border-gray-600 focus:border-black rounded-md min-h-10">
+              <select
+                onChange={(e) =>
+                  setListingData({ ...listingData, type: e.target.value })
+                }
+                className="border border-gray-600 focus:border-black rounded-md min-h-10"
+              >
                 <option value="Sell">Sell</option>
                 <option value="Rent">Rent</option>
               </select>
@@ -126,6 +178,15 @@ export const CreateListings = () => {
                 type="number"
                 className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3 max-w-20"
                 placeholder="Beds"
+                onChange={(e) =>
+                  setListingData({
+                    ...listingData,
+                    specifications: {
+                      ...listingData.specifications,
+                      rooms: e.target.value,
+                    },
+                  })
+                }
               />
             </label>
             <label className="flex flex-col">
@@ -134,6 +195,15 @@ export const CreateListings = () => {
                 type="number"
                 className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3 max-w-20"
                 placeholder="Baths"
+                onChange={(e) =>
+                  setListingData({
+                    ...listingData,
+                    specifications: {
+                      ...listingData.specifications,
+                      bathrooms: e.target.value,
+                    },
+                  })
+                }
               />
             </label>
             <label className="flex flex-col">
@@ -142,6 +212,15 @@ export const CreateListings = () => {
                 type="number"
                 className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3 max-w-20"
                 placeholder="Parkings"
+                onChange={(e) =>
+                  setListingData({
+                    ...listingData,
+                    specifications: {
+                      ...listingData.specifications,
+                      parkings: e.target.value,
+                    },
+                  })
+                }
               />
             </label>
           </div>
@@ -187,9 +266,15 @@ export const CreateListings = () => {
                 </button>
               </div>
             ))}
-          <button className="inline-flex justify-center p-2 bg-red-600 hover:bg-red-700 text-white">
-            Create
+          <button
+            disabled={loading}
+            className="inline-flex justify-center p-2 bg-red-600 hover:bg-red-700 text-white"
+          >
+            {loading ? "Creating..." : "Create"}
           </button>
+          {error && (
+            <p className=" bg-red-400 p-2 rounded-lg text-white">{error}</p>
+          )}
         </div>
       </form>
     </div>

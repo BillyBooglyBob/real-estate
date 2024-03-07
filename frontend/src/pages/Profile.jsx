@@ -33,14 +33,14 @@ export const Profile = () => {
             </button>
           </div>
           <div className="grid grid-cols-3 lg:grid-cols-3 md:grid-cols-2 gap-4">
-            <Link to={"/view-listings"}>
+            <Link to={"/listings/view"}>
               <div className="bg-gray-100 p-4 rounded-xl shadow-md min-h-40 cursor-pointer">
                 <img src="https://argonaut.au.reastatic.net/resi-myrea/prod/me-web/track-property-7129fdcb02993d5c8f29.svg" />
                 <div className="font-bold mt-4 mb-4">Track your properties</div>
                 <p>Stay up to date with your home or properties you own.</p>
               </div>
             </Link>
-            <Link to={"/create-listings"}>
+            <Link to={"/listings/create"}>
               <div className="bg-gray-100 p-4 rounded-xl shadow-md min-h-40 cursor-pointer">
                 <img src="https://argonaut.au.reastatic.net/resi-myrea/prod/me-web/private-landlord-31fca422a6f744faca86.svg" />
                 <div className="font-bold mt-4 mb-4">Create new listing</div>

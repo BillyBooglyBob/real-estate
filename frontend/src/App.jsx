@@ -18,8 +18,8 @@ export default function App() {
         <Route path="/sign-up" element={<SignUp />}></Route>
         <Route path="/about" element={<About />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
-        <Route path="/create-listings" element={<CreateListings />}></Route>
-        <Route path="/view-listings" element={<ViewListings />}></Route>
+        <Route path="/listings/create" element={<CreateListings />}></Route>
+        <Route path="/listings/view" element={<ViewListings />}></Route>
       </Routes>
     </BrowserRouter>
   );

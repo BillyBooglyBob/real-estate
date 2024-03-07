@@ -52,12 +52,20 @@ listingSchema.statics.createNewListing = async function ({ address, description,
         throw Error('Values cannot be negative')
     }
 
-    if (type !== 'Buy' && type !== 'Rent') {
+    if (type !== 'Sell' && type !== 'Rent') {
         throw Error(`Invalid listing type
         Can only list for
         - Sell
         - Rent
         `)
+    }
+
+    if (imageUrls.length === 0) {
+        throw Error('Must upload at least one image')
+    }
+
+    if (imageUrls.length > 7) {
+        throw Error('Maximum 6 images per listing')
     }
 
     const duplicateAddress = await this.findOne({ address })
