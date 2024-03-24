@@ -13,15 +13,13 @@ export const Listing = () => {
   // Get the id of the webpage
   // contains listing to extract data for
   const { id } = useParams();
+  // initialise the fields so data retrieved can be easily copied in
   const [listingData, setListingData] = useState({
-    imageUrls: [
-      "https://firebasestorage.googleapis.com/v0/b/real-estate-7f02c.appspot.com/o/1709790616628wallhaven-1pqq1w_1920x1080.png?alt=media&token=d81eedff-357e-4294-b1f2-236859c7cdbe",
-      "https://firebasestorage.googleapis.com/v0/b/real-estate-7f02c.appspot.com/o/1709790616632wallhaven-jxrrmp_1920x1080.png?alt=media&token=773e68cf-4c52-4a27-a32a-fb77413eaa8f",
-    ],
-    address: "Bob St",
-    description: "ABABABA",
+    imageUrls: [],
+    address: "",
+    description: "",
     price: 0,
-    type: "Sell",
+    type: "",
     specifications: {
       rooms: 0,
       bathrooms: 0,

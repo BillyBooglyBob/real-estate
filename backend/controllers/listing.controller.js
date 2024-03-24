@@ -48,9 +48,9 @@ export const getUserListings = async (req, res) => {
         // get the listings of the user
         const userListings = await Listing.find({ seller: userId._id })
 
-        res.status(500).json({ email: userEmail, listings: userListings })
+        res.status(200).json({ email: userEmail, listings: userListings })
     } catch (error) {
-        res.status(200).json({ error: error.message })
+        res.status(500).json({ error: error.message })
     }
 
 }
