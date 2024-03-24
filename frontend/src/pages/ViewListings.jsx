@@ -35,16 +35,26 @@ Delete button to remove the listing
 
   // when user click on a listing, bring to the actual listings page
   const checkListing = (id) => {
-    console.log(id);
     navigate(`/listings/${id}`);
   };
+
+  // deletes the listing
+  const handleDeleteListing = async (id) => {
+    try {
+      const res = await axios.post(`/api/listings/${id}`, id)
+      setListings(listings.filter((listing) => listing._id != id))
+
+    } catch (error) {
+      console.log(error.response.data.error)
+    }
+  }
 
   return (
     <div className="mt-5 ml-20">
       <h1 className="mb-5 font-bold text-3xl">User Listings</h1>
       {listings.map((listing) => (
         <div
-          key={listing.id}
+          key={listing._id}
           className="flex flex-row justify-between gap-5 w-96 max-h-62 p-5 mb-5 border border-gray-700 rounded-lg"
         >
           <div
@@ -71,7 +81,7 @@ Delete button to remove the listing
             />
           </div>
 
-          <button className="text-red-700 uppercase hover:opacity-75">
+          <button onClick={() => handleDeleteListing(listing._id)} className="text-red-700 uppercase hover:opacity-75">
             Delete
           </button>
         </div>
