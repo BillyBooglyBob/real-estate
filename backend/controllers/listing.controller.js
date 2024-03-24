@@ -7,11 +7,22 @@ export const createListing = async (req, res) => {
     try {
         // use the current signed in user's id as the seller
         const inputs = { ...req.body, seller: req.user.id }
-        const newListing = await Listing.createNewListing(inputs)
+        const newListing = await Listing.createNewListing(inputs).sort({ createdAt: -1 })
 
         res.status(200).json(newListing)
     } catch (error) {
         res.status(400).json({ error: error.message })
+    }
+}
+
+// Get all listings
+export const getAllListings = async (req, res) => {
+    try {
+        const listings = await Listing.find()
+
+        res.status(200).json(listings)
+    } catch (error) {
+        res.status(500).json({ error: error.message })
     }
 }
 
