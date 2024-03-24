@@ -1,12 +1,18 @@
 import express from "express";
-import { createListing, getListing } from "../controllers/listing.controller.js";
+import { createListing, getListing, getUserListings } from "../controllers/listing.controller.js";
 import { checkToken } from "../utils/checkToken.js";
 
 const router = express.Router()
 
+// create listing
 router.post('/', checkToken, createListing)
 
-// Doesn't need to check token as everyone should be able to view listings
+// data for one listing
+// no need to check token as everyone should be able to view listings
 router.get('/:id', getListing)
+
+// all listings of a user
+// no need to check token as profile can only be accessed when the user is logged in
+router.get('/view/:email', getUserListings)
 
 export default router
