@@ -55,7 +55,8 @@ export const CreateListings = () => {
           setUploading(false);
         })
         .catch(() => {
-          setImageUploadError("Image upload failed (2mb max per image)");
+          setImageUploadError("Image upload failed (3mb max per image)");
+          setUploading(false);
         });
     } else if (length === 0) {
       setImageUploadError("Must upload at least 1 image");
@@ -102,16 +103,16 @@ export const CreateListings = () => {
   // submit data to the create listing api route
   // catch error
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
       setLoading(true);
       setError(false);
 
       const res = await axios.post("/api/listings", listingData);
       setLoading(false);
-      console.log('success')
+      console.log("success");
       console.log(res.data);
-      navigate(`/listings/${res.data._id}`)
+      navigate(`/listings/${res.data._id}`);
       // navigate to the current user listings
     } catch (error) {
       setError(error.response.data.error);

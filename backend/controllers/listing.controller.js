@@ -54,3 +54,21 @@ export const getUserListings = async (req, res) => {
     }
 
 }
+
+// deletes the listing with the id provided
+export const deleteListing = async (req, res) => {
+    try {
+        const id = req.params.id
+
+        // verify the id
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(4040).json({ error: 'Invalid ID' })
+        }
+
+        const listingDeleted = await Listing.findByIdAndDelete(id)
+
+        res.status(200).json({ listing: listingDeleted })
+    } catch (error) {
+        res.status(500).json({ error: error.message })
+    }
+}
