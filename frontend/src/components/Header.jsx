@@ -35,11 +35,6 @@ export const Header = () => {
                   Home
                 </button>
               </Link>
-              <Link to="/about">
-                <button className="hidden sm:inline hover:bg-slate-300 w-20 h-12 rounded-lg">
-                  About
-                </button>
-              </Link>
               <Link to="/sign-in">
                 <button className="hover:bg-slate-300 w-20 h-12 rounded-lg">
                   Sign In

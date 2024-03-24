@@ -41,7 +41,7 @@ Delete button to remove the listing
   // deletes the listing
   const handleDeleteListing = async (id) => {
     try {
-      const res = await axios.post(`/api/listings/${id}`, id)
+      await axios.post(`/api/listings/${id}`, id)
       setListings(listings.filter((listing) => listing._id != id))
 
     } catch (error) {
