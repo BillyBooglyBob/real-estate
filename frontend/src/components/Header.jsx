@@ -1,7 +1,7 @@
 import { FaSearch } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -10,12 +10,26 @@ export const Header = () => {
   const [searchInput, setSearchInput] = useState("");
 
   // navigate to search page
-  const handleSearch = () => {
-    setSearchInput("")
-    // ensures there is always an input to search by
-    const input = searchInput === "" ? "default" : searchInput
-    navigate(`/listings/search/${input}`);
+  const handleSearch = (e) => {
+    e.preventDefault();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("searchTerm", searchInput);
+
+    const searchQuery = urlParams.toString();
+
+    navigate(`/listings/search?${searchQuery}`);
   };
+
+  // automatically update value inside the search bar when the url is changed
+  // manually
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermParams = urlParams.get("searchTerm");
+    if (searchTermParams) {
+      setSearchInput(searchTermParams);
+    }
+  }, []);
 
   return (
     <header className="shadow-md">
@@ -23,7 +37,10 @@ export const Header = () => {
         <Link to="/">
           <h1 className="ml-2 font-bold">DreamDwell Realty</h1>
         </Link>
-        <form className="ml-14 bg-slate-200 rounded-lg flex items-center justify-between p-3">
+        <form
+          onSubmit={handleSearch}
+          className="ml-14 bg-slate-200 rounded-lg flex items-center justify-between p-3"
+        >
           <input
             onChange={(e) => setSearchInput(e.target.value)}
             type="text"
@@ -32,10 +49,9 @@ export const Header = () => {
             className="bg-transparent focus:outline-none w-54 sm:w-64"
             value={searchInput}
           />
-          <FaSearch
-            onClick={() => handleSearch()}
-            className="text-slate-400 cursor-pointer"
-          />
+          <button>
+            <FaSearch className="text-slate-400 cursor-pointer" />
+          </button>
         </form>
         <nav>
           {user && (
