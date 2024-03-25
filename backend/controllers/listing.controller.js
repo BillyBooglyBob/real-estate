@@ -7,7 +7,7 @@ export const createListing = async (req, res) => {
     try {
         // use the current signed in user's id as the seller
         const inputs = { ...req.body, seller: req.user.id }
-        const newListing = await Listing.createNewListing(inputs).sort({ createdAt: -1 })
+        const newListing = await Listing.createNewListing(inputs)
 
         res.status(200).json(newListing)
     } catch (error) {
@@ -18,7 +18,7 @@ export const createListing = async (req, res) => {
 // Get all listings
 export const getAllListings = async (req, res) => {
     try {
-        const listings = await Listing.find()
+        const listings = await Listing.find().sort({ createdAt: -1 })
 
         res.status(200).json(listings)
     } catch (error) {

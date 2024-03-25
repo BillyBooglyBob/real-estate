@@ -19,7 +19,7 @@ router.get('/:id', getListing)
 router.get('/view/:email', getUserListings)
 
 // delete the selected listing
-router.post('/:id', deleteListing)
+router.post('/:id', checkToken, deleteListing)
 
 
 

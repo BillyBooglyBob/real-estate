@@ -39,12 +39,12 @@ export const Home = () => {
       </div>
       <div className="pl-10 pt-10 pb-20">
         <h1 className="font-semibold text-2xl mb-10">New listings</h1>
-        <div className="flex gap-5 ">
+        <div className="flex flex-col gap-5 sm:flex-row">
           {newListings.map((listing) => (
             <div
               onClick={() => checkListing(listing._id)}
               key={listing._id}
-              className="cursor-pointer flex flex-col gap-3 min-w-64 max-h-90 rounded-lg bg-gray-200"
+              className="cursor-pointer flex flex-col gap-3 min-w-64 max-w-96 max-h-90 rounded-lg bg-gray-200"
             >
               <img
                 src={listing.imageUrls[0]}
