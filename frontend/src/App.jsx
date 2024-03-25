@@ -7,6 +7,7 @@ import { Header } from "./components/Header";
 import { CreateListings } from "./pages/CreateListings";
 import { ViewListings } from "./pages/ViewListings";
 import { Listing } from "./pages/Listing";
+import { SearchPage } from "./pages/SearchPage";
 
 export default function App() {
   return (
@@ -17,11 +18,12 @@ export default function App() {
         <Route path="/sign-in" element={<SignIn />}></Route>
         <Route path="/sign-up" element={<SignUp />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
+        <Route path="/listings/search/:input" element={<SearchPage />}></Route>
         <Route path="/listings/create" element={<CreateListings />}></Route>
         <Route path="/listings/view" element={<ViewListings />}></Route>
         {/* Path with placeholder must be at the end else /listings/create
         and /listings/view will never be reached, always reaching /listings/:id instead */}
-        <Route path='/listings/:id' element={<Listing/>}></Route>
+        <Route path="/listings/:id" element={<Listing />}></Route>
       </Routes>
     </BrowserRouter>
   );

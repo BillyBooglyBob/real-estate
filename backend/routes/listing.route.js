@@ -1,14 +1,14 @@
 import express from "express";
-import { createListing, deleteListing, getAllListings, getListing, getUserListings } from "../controllers/listing.controller.js";
+import { createListing, deleteListing, getAllListings, getListing, getListings, getUserListings } from "../controllers/listing.controller.js";
 import { checkToken } from "../utils/checkToken.js";
 
 const router = express.Router()
 
-// get all listings
-router.get('/', getAllListings)
-
 // create listing
 router.post('/', checkToken, createListing)
+
+// get listings (can specify filters)
+router.get('/search', getListings)
 
 // data for one listing
 // no need to check token as everyone should be able to view listings
@@ -20,7 +20,6 @@ router.get('/view/:email', getUserListings)
 
 // delete the selected listing
 router.post('/:id', checkToken, deleteListing)
-
 
 
 export default router

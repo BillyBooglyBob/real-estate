@@ -11,7 +11,7 @@ export const Home = () => {
   useEffect(() => {
     const getNewListings = async () => {
       try {
-        const res = await axios.get("/api/listings");
+        const res = await axios.get("/api/listings/search");
         const listings = res.data;
 
         // get the newest 3 listings
@@ -44,7 +44,7 @@ export const Home = () => {
             <div
               onClick={() => checkListing(listing._id)}
               key={listing._id}
-              className="cursor-pointer flex flex-col gap-3 min-w-64 max-w-96 max-h-90 rounded-lg bg-gray-200"
+              className="shadow-md cursor-pointer flex flex-col gap-3 min-w-64 max-w-96 max-h-90 rounded-lg bg-gray-200"
             >
               <img
                 src={listing.imageUrls[0]}

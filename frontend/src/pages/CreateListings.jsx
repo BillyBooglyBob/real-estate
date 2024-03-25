@@ -110,7 +110,6 @@ export const CreateListings = () => {
 
       const res = await axios.post("/api/listings", listingData);
       setLoading(false);
-      console.log("success");
       console.log(res.data);
       navigate(`/listings/${res.data._id}`);
       // navigate to the current user listings
@@ -119,8 +118,6 @@ export const CreateListings = () => {
       setLoading(false);
     }
   };
-
-  console.log(listingData);
 
   return (
     <div className="max-w-3xl p-3 mx-auto">

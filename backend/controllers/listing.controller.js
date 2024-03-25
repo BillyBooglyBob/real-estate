@@ -15,14 +15,23 @@ export const createListing = async (req, res) => {
     }
 }
 
-// Get all listings
-export const getAllListings = async (req, res) => {
+// Get listings based on search parameters
+export const getListings = async (req, res) => {
     try {
-        const listings = await Listing.find().sort({ createdAt: -1 })
+        // get search terms and provide default values
+        const searchTerm = req.query.searchTerm || ''
+        const type = req.query.type || 'Sell'
+        const sort = req.query.sort || 'createdAt'
+        const order = req.query.order || 'desc'
 
-        res.status(200).json(listings)
+        const listings = await Listing.find({
+            address: { $regex: searchTerm, $options: 'i' },
+            type
+        }).sort({ [sort]: order })
+
+        return res.status(200).json(listings)
     } catch (error) {
-        res.status(500).json({ error: error.message })
+        res.status(500).json({ error: error })
     }
 }
 
