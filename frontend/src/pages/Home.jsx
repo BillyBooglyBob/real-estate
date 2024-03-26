@@ -44,7 +44,7 @@ export const Home = () => {
             <div
               onClick={() => checkListing(listing._id)}
               key={listing._id}
-              className="shadow-md cursor-pointer flex flex-col gap-3 min-w-64 max-w-96 max-h-90 rounded-lg bg-gray-200"
+              className="hover:shadow-lg cursor-pointer flex flex-col gap-3 min-w-64 max-w-96 max-h-90 rounded-lg bg-gray-200"
             >
               <img
                 src={listing.imageUrls[0]}

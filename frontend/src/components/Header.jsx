@@ -29,7 +29,7 @@ export const Header = () => {
     if (searchTermParams) {
       setSearchInput(searchTermParams);
     }
-  }, []);
+  }, [location.search]);
 
   return (
     <header className="shadow-md">
