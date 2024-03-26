@@ -38,13 +38,6 @@ export const SignUp = () => {
           className="flex flex-col gap-5 min-w-full"
         >
           <input
-            className=" border border-gray-600 focus:border-black rounded-lg p-2 pl-3 "
-            type="text"
-            placeholder="Username"
-            id="username"
-            onChange={handleChange}
-          />
-          <input
             className=" border border-gray-600 focus:border-black rounded-lg p-2 pl-3"
             type="text"
             placeholder="Email"

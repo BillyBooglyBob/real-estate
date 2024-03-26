@@ -84,10 +84,10 @@ export const Listing = () => {
           </button>
         </div>
       </div>
-      <div className="mt-5 mb-5 mx-20 flex justify-between items-center flex-row">
+      <div className="mt-5 mb-5 mx-20 flex gap-40 justify-between flex-row">
         <div>
-          <h1 className="font-bold text-2xl mb-2">Description:</h1>
-          <p>{listingData.description}</p>
+          <h1 className="font-bold text-2xl mb-2 ">Description:</h1>
+          <p className="">{listingData.description}</p>
         </div>
         <div>
           <h1 className="font-bold text-2xl mb-2">Contact:</h1>

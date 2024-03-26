@@ -80,6 +80,11 @@ export const SearchPage = () => {
     getListings();
   }, [location.search]);
 
+  // when user click on a listing, bring to the actual listings page
+  const checkListing = (id) => {
+    navigate(`/listings/${id}`);
+  };
+
   return (
     <div>
       <div>
@@ -140,13 +145,14 @@ export const SearchPage = () => {
           ) : (
             listings.map((listing) => (
               <div
+                onClick={() => checkListing(listing._id)}
                 key={listing._id}
                 className="hover:shadow-lg cursor-pointer flex flex-col gap-3 min-w-64 max-w-96 max-h-90 rounded-lg bg-gray-200"
               >
                 <img
                   src={listing.imageUrls[0]}
                   alt="Property image"
-                  className="object-cover h-52 min-w-80 overflow-hidden rounded-t-lg"
+                  className="object-cover h-52 w-80 overflow-hidden rounded-t-lg"
                 />
 
                 <div className="flex flex-col gap-3 p-3">
