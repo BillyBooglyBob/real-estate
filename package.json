@@ -20,7 +20,8 @@
     "dev": "nodemon backend/app.js",
     "start": "node backend/app.js",
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
-    "watch": "NODE_OPTIONS=--experimental-vm-modules npx jest --watchAll"
+    "watch": "NODE_OPTIONS=--experimental-vm-modules npx jest --watchAll",
+    "build": "npm install && npm install --prefix client && npm run build --prefix client"
   },
   "keywords": [],
   "author": "",
