@@ -135,6 +135,8 @@ export const SearchPage = () => {
         <div className="flex flex-wrap gap-5 mt-5">
           {loading ? (
             <h1>Loading ...</h1>
+          ) : listings.length === 0 ? (
+            <h1>No results</h1>
           ) : (
             listings.map((listing) => (
               <div
