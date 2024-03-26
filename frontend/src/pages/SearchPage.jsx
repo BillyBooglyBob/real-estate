@@ -133,34 +133,38 @@ export const SearchPage = () => {
       <div className="ml-20 mb-10">
         <h1 className="text-3xl font-bold mt-10">Listings</h1>
         <div className="flex flex-wrap gap-5 mt-5">
-          {listings.map((listing) => (
-            <div
-              key={listing._id}
-              className="hover:shadow-lg cursor-pointer flex flex-col gap-3 min-w-64 max-w-96 max-h-90 rounded-lg bg-gray-200"
-            >
-              <img
-                src={listing.imageUrls[0]}
-                alt="Property image"
-                className="object-cover h-52 min-w-80 overflow-hidden rounded-t-lg"
-              />
+          {loading ? (
+            <h1>Loading ...</h1>
+          ) : (
+            listings.map((listing) => (
+              <div
+                key={listing._id}
+                className="hover:shadow-lg cursor-pointer flex flex-col gap-3 min-w-64 max-w-96 max-h-90 rounded-lg bg-gray-200"
+              >
+                <img
+                  src={listing.imageUrls[0]}
+                  alt="Property image"
+                  className="object-cover h-52 min-w-80 overflow-hidden rounded-t-lg"
+                />
 
-              <div className="flex flex-col gap-3 p-3">
-                <p>{listing.address}</p>
-                <div className="flex gap-3">
-                  <p className="flex gap-3">
-                    <FaBed /> {listing.specifications.rooms}
-                  </p>
-                  <p className="flex gap-3">
-                    <FaShower /> {listing.specifications.bathrooms}
-                  </p>
-                  <p className="flex gap-3">
-                    <FaCar /> {listing.specifications.parkings}
-                  </p>
+                <div className="flex flex-col gap-3 p-3">
+                  <p>{listing.address}</p>
+                  <div className="flex gap-3">
+                    <p className="flex gap-3">
+                      <FaBed /> {listing.specifications.rooms}
+                    </p>
+                    <p className="flex gap-3">
+                      <FaShower /> {listing.specifications.bathrooms}
+                    </p>
+                    <p className="flex gap-3">
+                      <FaCar /> {listing.specifications.parkings}
+                    </p>
+                  </div>
+                  <p>${listing.price}</p>
                 </div>
-                <p>${listing.price}</p>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>
