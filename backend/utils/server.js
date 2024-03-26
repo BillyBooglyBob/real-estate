@@ -23,20 +23,20 @@ const createServer = () => {
     app.use(express.json())
     app.use(cookieParser());
 
-    app.use(express.static(path.join(__dirname, '/frontend/dist')))
-
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'))
-    })
-
     // display request made to the api
     app.use((req, res, next) => {
         console.log(req.path, req.method)
         next()
     })
-
+    
     app.use('/api/auth', authRouter)
     app.use('/api/listings', listingRouter)
+    
+    app.use(express.static(path.join(__dirname, '/frontend/dist')))
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'))
+    })
 
     return app
 }
