@@ -3,11 +3,6 @@ import validator from 'validator'
 import bcryptjs from 'bcryptjs'
 
 const userSchema = new mongoose.Schema({
-    username: {
-        type: String,
-        required: true,
-        unique: true
-    },
     email: {
         type: String,
         required: true,
@@ -19,9 +14,9 @@ const userSchema = new mongoose.Schema({
     }
 }, { timestamps: true })
 
-userSchema.statics.signup = async function (username, email, password) {
+userSchema.statics.signup = async function (email, password) {
     // validate input fields
-    if (!username || !email || !password) {
+    if (!email || !password) {
         throw Error("All fields must be filled")
     }
 
@@ -44,15 +39,9 @@ userSchema.statics.signup = async function (username, email, password) {
         throw Error("Email already in use.")
     }
 
-    const usernameExists = await this.findOne({ username })
-    if (usernameExists) {
-        throw Error("Username already in use.")
-    }
-
     const hashedPassword = bcryptjs.hashSync(password, 10)
 
     const newUser = await this.create({
-        username,
         email,
         password: hashedPassword
     })

@@ -2,10 +2,10 @@ import User from '../models/user.model.js'
 import createToken from '../utils/createToken.js'
 
 export const signup = async (req, res) => {
-    const { username, email, password } = req.body
+    const { email, password } = req.body
 
     try {
-        const newUser = await User.signup(username, email, password)
+        const newUser = await User.signup(email, password)
 
         res.status(201).json({ email: email })
     } catch (error) {

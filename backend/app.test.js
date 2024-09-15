@@ -15,9 +15,9 @@ process.env.SECRET = 'abcd'
 describe('Real estate API', () => {
     describe('POST /sign-up', () => {
         // mock database function
-        User.signup = jest.fn(async (username, email, password) => {
+        User.signup = jest.fn(async (email, password) => {
             // validate input fields
-            if (!username || !email || !password) {
+            if (!email || !password) {
                 throw Error("All fields must be filled")
             }
 
@@ -38,7 +38,6 @@ describe('Real estate API', () => {
 
         it('return 201 status code and email when valid signup data inputted', async () => {
             const userData = {
-                username: 'James',
                 email: 'james@gmail.com',
                 password: 'abcABC1/'
             }
@@ -53,7 +52,6 @@ describe('Real estate API', () => {
 
         it('400 status code and throw error when invalid email inputted', async () => {
             const userData = {
-                username: 'James',
                 email: 'james',
                 password: 'abcABC1/'
             }
@@ -69,15 +67,12 @@ describe('Real estate API', () => {
         it('400 status code and throw error when weak password inputted', async () => {
             const userData = [
                 {
-                    username: 'James',
                     email: 'james@gmail.com',
                     password: 'abc'
                 }, {
-                    username: 'Bob',
                     email: 'bob@gmail.com',
                     password: 'ABC123'
                 }, {
-                    username: 'ajlksdjflsa',
                     email: 'slkdfas@gmail.com',
                     password: 'abcABC123'
                 }]
@@ -93,9 +88,8 @@ describe('Real estate API', () => {
 
         })
 
-        it('400 status code when email, username and/or password missing', async () => {
+        it('400 status code when email and/or password missing', async () => {
             const userData = [
-                { username: 'bob' },
                 { email: 'billy@gmail.com' },
                 { password: 'abcABC1/' },
                 {}
@@ -199,7 +193,7 @@ describe('Real estate API', () => {
             }
         })
 
-        it('400 status code when email, username and/or password missing', async () => {
+        it('400 status code when email and/or password missing', async () => {
             const userData = [
                 { email: 'billy@gmail.com' },
                 { password: 'abcABC1/' },
