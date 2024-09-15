@@ -40,6 +40,13 @@ export const SignUp = () => {
           <input
             className=" border border-gray-600 focus:border-black rounded-lg p-2 pl-3"
             type="text"
+            placeholder="Username"
+            id="username"
+            onChange={handleChange}
+          />
+          <input
+            className=" border border-gray-600 focus:border-black rounded-lg p-2 pl-3"
+            type="text"
             placeholder="Email"
             id="email"
             onChange={handleChange}
