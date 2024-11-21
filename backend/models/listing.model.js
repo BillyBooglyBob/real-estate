@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+// Create schema for the listing data
+// To control what data is stored in the database
 const listingSchema = new mongoose.Schema({
     address: {
         type: String,
@@ -48,6 +50,7 @@ listingSchema.statics.createNewListing = async function ({ address, description,
 
     const { rooms, bathrooms, parkings } = specifications
 
+    // Validate the input
     if (price < 0 || rooms < 0 || bathrooms < 0 || parkings < 0) {
         throw Error('Values cannot be negative')
     }
@@ -68,6 +71,7 @@ listingSchema.statics.createNewListing = async function ({ address, description,
         throw Error('Maximum 6 images per listing')
     }
 
+    // Check if the address is unique
     const duplicateAddress = await this.findOne({ address })
     if (duplicateAddress) {
         throw Error("Address must be unique")

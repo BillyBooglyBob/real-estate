@@ -34,17 +34,22 @@ export const CreateListings = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(null);
 
+  // store image in firebase storage
   const handleImageSubmit = () => {
     const length = files.length + listingData.imageUrls.length;
+    // Only allow 1-6 images to be uploaded
     if (length > 0 && length < 7) {
+      // Start loading
       setUploading(true);
       setImageUploadError(false);
 
+      // Create an array of promises to upload each image
       const promises = [];
       for (let i = 0; i < files.length; i++) {
         promises.push(storeImage(files[i]));
       }
 
+      // Wait for all promises to resolve and upload the images at once
       Promise.all(promises)
         .then((urls) => {
           setListingData({
@@ -67,6 +72,7 @@ export const CreateListings = () => {
     }
   };
 
+  // store image in firebase storage
   const storeImage = async (file) => {
     return new Promise((resolve, reject) => {
       const storage = getStorage(app);
@@ -93,6 +99,7 @@ export const CreateListings = () => {
     });
   };
 
+  // delete image from the listing data
   const handleDeleteImage = (index) => {
     setListingData({
       ...listingData,
@@ -120,9 +127,11 @@ export const CreateListings = () => {
   };
 
   return (
-    <div className="max-w-3xl p-3 mx-auto">
+    <div className="max-w-3xl py-14 mx-auto">
       <h1 className="text-3xl font-bold text-center mb-3">Create listing</h1>
+      {/* Listing form */}
       <form onSubmit={handleSubmit} className="flex gap-4 flex-col sm:flex-row">
+        {/* Listing details */}
         <div className="flex flex-col gap-3">
           <label className="flex flex-col">
             Address
@@ -223,6 +232,7 @@ export const CreateListings = () => {
             </label>
           </div>
         </div>
+        {/* Upload images and Create button */}
         <div className="flex flex-col mx-auto gap-3">
           <h1>Upload images</h1>
           <div className="flex gap-5">

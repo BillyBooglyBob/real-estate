@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { FaBed, FaCar, FaShower } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import ListingItem from "../components/ListingItem";
 
 export const SearchPage = () => {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ export const SearchPage = () => {
     }
   };
 
-  // navigate to the search page again with the updated query
+  // navigate to the search page again (refresh the page) with the updated query
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -72,6 +73,7 @@ export const SearchPage = () => {
     const getListings = async () => {
       setLoading(true);
       const searchQuery = urlParams.toString();
+      console.log("searchQuery", searchQuery);
       const res = await axios.get(`/api/listings/search?${searchQuery}`);
       setListings(res.data);
       setLoading(false);
@@ -86,7 +88,8 @@ export const SearchPage = () => {
   };
 
   return (
-    <div>
+    <div className="bg-gray-200 p-5 min-h-[32.7rem]">
+      {/* Search input and filters */}
       <div>
         <form
           onSubmit={handleSubmit}
@@ -128,13 +131,14 @@ export const SearchPage = () => {
                 <option value="createdAt_asc">Oldest</option>
               </select>
             </label>
-            <button className="min-w-24 sm:min-w-32 p-2 bg-gray-200 hover:bg-gray-300 rounded-md">
+            <button className="min-w-24 sm:min-w-32 p-2 bg-white hover:bg-gray-300 rounded-md">
               Search
             </button>
           </div>
         </form>
       </div>
 
+      {/* Search results */}
       <div className="ml-20 mb-10">
         <h1 className="text-3xl font-bold mt-10">Listings</h1>
         <div className="flex flex-wrap gap-5 mt-5">
@@ -144,33 +148,11 @@ export const SearchPage = () => {
             <h1>No results</h1>
           ) : (
             listings.map((listing) => (
-              <div
-                onClick={() => checkListing(listing._id)}
+              <ListingItem
+                listing={listing}
+                checkListing={checkListing}
                 key={listing._id}
-                className="hover:shadow-lg cursor-pointer flex flex-col gap-3 min-w-64 max-w-96 max-h-90 rounded-lg bg-gray-200"
-              >
-                <img
-                  src={listing.imageUrls[0]}
-                  alt="Property image"
-                  className="object-cover h-52 w-80 overflow-hidden rounded-t-lg"
-                />
-
-                <div className="flex flex-col gap-3 p-3">
-                  <p>{listing.address}</p>
-                  <div className="flex gap-3">
-                    <p className="flex gap-3">
-                      <FaBed /> {listing.specifications.rooms}
-                    </p>
-                    <p className="flex gap-3">
-                      <FaShower /> {listing.specifications.bathrooms}
-                    </p>
-                    <p className="flex gap-3">
-                      <FaCar /> {listing.specifications.parkings}
-                    </p>
-                  </div>
-                  <p>${listing.price}</p>
-                </div>
-              </div>
+              />
             ))
           )}
         </div>

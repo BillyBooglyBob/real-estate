@@ -6,17 +6,22 @@ import { LOGIN } from "../redux/user";
 
 export const SignIn = () => {
   const [formData, setFormData] = useState({});
+
   // for displaying error to the screen if present
   const [error, setError] = useState(null);
+
   // disable submit button if loading
   const [loading, setLoading] = useState(null);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // update form data when input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  // handle sign in
   const handleSignIn = async (e) => {
     e.preventDefault();
     // reset error and start loading when there is a new sign in attempt

@@ -13,6 +13,7 @@ export const Header = () => {
   const handleSearch = (e) => {
     e.preventDefault();
 
+    // Set URL search params to the search input
     const urlParams = new URLSearchParams(window.location.search);
     urlParams.set("searchTerm", searchInput);
 
@@ -24,6 +25,7 @@ export const Header = () => {
   // automatically update value inside the search bar when the url is changed
   // manually
   useEffect(() => {
+    // Get the search term from the URL and set it to the search input
     const urlParams = new URLSearchParams(location.search);
     const searchTermParams = urlParams.get("searchTerm");
     if (searchTermParams) {
@@ -32,21 +34,21 @@ export const Header = () => {
   }, [location.search]);
 
   return (
-    <header className="shadow-md">
+    <header className="shadow-md bg-red-400">
       <div className="flex justify-between items-center mx-auto p-3">
         <Link to="/">
-          <h1 className="ml-2 font-bold">DreamDwell Realty</h1>
+          <h1 className="ml-2 font-bold text-white">DreamDwell Realty</h1>
         </Link>
         <form
           onSubmit={handleSearch}
-          className="ml-14 bg-slate-200 rounded-lg flex items-center justify-between p-3"
+          className="ml-14 bg-slate-100 rounded-lg flex items-center justify-between p-3 w-[40rem]"
         >
           <input
             onChange={(e) => setSearchInput(e.target.value)}
             type="text"
             name="search"
-            placeholder="Search ..."
-            className="bg-transparent focus:outline-none w-54 sm:w-64"
+            placeholder="Search suburb or postcode"
+            className="bg-transparent focus:outline-none w-full"
             value={searchInput}
           />
           <button>
@@ -57,7 +59,7 @@ export const Header = () => {
           {user && (
             <div className="mr-2">
               <Link to="/profile">
-                <button className="hover:bg-slate-300 w-20 h-12 rounded-lg">
+                <button className="hover:bg-slate-300 w-20 h-12 rounded-lg bg-slate-200">
                   Profile
                 </button>
               </Link>

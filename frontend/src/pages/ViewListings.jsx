@@ -4,13 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const ViewListings = () => {
-  /* Get all the listings of the user currently signed in
-get the email first, get the user with that email, get the listings with the user 
-store list of listings.
-
-Display the listings, each with a link to the relevant listing page
-Delete button to remove the listing
-*/
+  // Get all the listings of the current logged in user
   const navigate = useNavigate();
   const [listings, setListings] = useState([]);
 
@@ -41,17 +35,18 @@ Delete button to remove the listing
   // deletes the listing
   const handleDeleteListing = async (id) => {
     try {
-      await axios.post(`/api/listings/${id}`, id)
-      setListings(listings.filter((listing) => listing._id != id))
-
+      await axios.post(`/api/listings/${id}`, id);
+      setListings(listings.filter((listing) => listing._id != id));
     } catch (error) {
-      console.log(error.response.data.error)
+      console.log(error.response.data.error);
     }
-  }
+  };
 
   return (
-    <div className="mt-5 ml-20">
-      <h1 className="mb-5 font-bold text-3xl">User Listings</h1>
+    <div className="mt-5 ml-20 p-14">
+      <h1 className="mb-5 text-4xl font-extrabold">User Listings</h1>
+      {/* User listings */}
+      {listings.length === 0 && <div>No listings</div>}
       {listings.map((listing) => (
         <div
           key={listing._id}
@@ -61,6 +56,7 @@ Delete button to remove the listing
             onClick={() => checkListing(listing._id)}
             className="flex gap-5 items-center cursor-pointer"
           >
+            {/* Listing details */}
             <div>
               <h1 className="font-bold">Address:</h1>
               <p>{listing.address}</p>
@@ -74,6 +70,7 @@ Delete button to remove the listing
               </div>
               <p>${listing.price}</p>
             </div>
+            {/* Listing first image */}
             <img
               src={listing.imageUrls[0]}
               alt="Property image"
@@ -81,7 +78,11 @@ Delete button to remove the listing
             />
           </div>
 
-          <button onClick={() => handleDeleteListing(listing._id)} className="text-red-700 uppercase hover:opacity-75">
+          {/* Delete button */}
+          <button
+            onClick={() => handleDeleteListing(listing._id)}
+            className="text-red-700 uppercase hover:opacity-75"
+          >
             Delete
           </button>
         </div>

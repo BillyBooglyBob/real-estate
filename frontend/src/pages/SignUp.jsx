@@ -4,17 +4,22 @@ import axios from "axios";
 
 export const SignUp = () => {
   const [formData, setFormData] = useState({});
+
   // for displaying error to the screen if present
   const [error, setError] = useState(null);
+
   // disable submit button if loading
+
   const [loading, setLoading] = useState(null);
   const navigate = useNavigate();
 
+  // update form data when input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleSignIn = async (e) => {
+  // handle sign up
+  const handleSignUp = async (e) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
@@ -34,7 +39,7 @@ export const SignUp = () => {
       <div className=" bg-white min-h-screen w-2/5 flex justify-center items-center flex-col gap-3 p-10 shadow-md">
         <h1 className=" text-2xl font-bold">Create Account</h1>
         <form
-          onSubmit={handleSignIn}
+          onSubmit={handleSignUp}
           className="flex flex-col gap-5 min-w-full"
         >
           <input
