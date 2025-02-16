@@ -3,16 +3,18 @@ import { Home } from "./pages/Home";
 import { SignIn } from "./pages/SignIn";
 import { SignUp } from "./pages/SignUp";
 import { Profile } from "./pages/Profile";
-import { Header } from "./components/Header";
+import { Header } from "./components/Header/Header";
 import { CreateListings } from "./pages/CreateListings";
 import { ViewListings } from "./pages/ViewListings";
 import { Listing } from "./pages/Listing";
 import { SearchPage } from "./pages/SearchPage";
+import ScrollToTop from "./components/ScrollToTop.jsx";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Header />
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />}></Route>
         <Route path="/sign-in" element={<SignIn />}></Route>

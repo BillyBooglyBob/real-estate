@@ -14,8 +14,8 @@ export const DropDown = ({ name, links }) => {
       onMouseLeave={() => setShowDropDown(false)} // Hover logic on parent
     >
       {/* Button */}
-      <button className="flex items-center gap-2 px-4 py-2 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-black-500 focus:ring-offset-2">
-        <span className="font-medium text-md ">{name}</span>
+      <button className="flex items-center gap-2 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-black-500 focus:ring-offset-2">
+        <span className="font-medium text-md">{name}</span>
         <motion.span variants={iconVariants}>
           <FaChevronDown />
         </motion.span>
@@ -33,11 +33,11 @@ export const DropDown = ({ name, links }) => {
           <motion.li
             key={link.name}
             variants={itemVariants}
-            className="flex items-center font-medium text-sm"
+            className="flex items-center justify-center font-medium text-sm"
           >
             <Link
               to={link.link}
-              className="w-full px-4 py-2 hover:bg-gray-100 transition-colors duration-200"
+              className="text-black flex items-center w-full h-14 px-4 py-2 hover:bg-gray-200 transition-colors duration-200"
             >
               {link.name}
             </Link>

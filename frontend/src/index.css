@@ -1,3 +1,19 @@
+@font-face {
+  font-family: "TenorSans";
+  src: url("./assets/fonts/TenorSans-Regular.ttf");
+}
+
+@font-face {
+  font-family: "NotoSans";
+  src: url("./assets/fonts/NotoSans-Regular.ttf");
+}
+
+@font-face {
+  font-family: "BetoGrande";
+  src: url("./assets/fonts/BwBetoGrande-Regular.otf");
+}
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,5 +29,4 @@ select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
   box-shadow: 0 0 0px 1000px #ffffff inset;
-
 }
