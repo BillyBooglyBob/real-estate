@@ -90,6 +90,7 @@ const ListingsCarousel = () => {
 
       {/* Slider Menu */}
       <div className="w-full flex justify-between px-14 mt-4">
+        {/* Forward + backward button */}
         <div className="text-white flex gap-10">
           <button onClick={prevListing}>
             <IoIosArrowBack />
@@ -97,6 +98,21 @@ const ListingsCarousel = () => {
           <button onClick={nextListing}>
             <IoIosArrowForward />
           </button>
+        </div>
+
+        {/* Image buttons */}
+        <div className="flex gap-10">
+          {listings.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentListing(index)}
+              className={`w-5 h-5 rounded-full ${
+                currentListing % listings.length == index
+                  ? "bg-white"
+                  : "bg-gray-600"
+              }`}
+            ></button>
+          ))}
         </div>
 
         <Link to="/listings/search">

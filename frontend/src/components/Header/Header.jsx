@@ -7,33 +7,49 @@ export const Header = () => {
   const user = useSelector((state) => state.user.currentUser);
   const location = useLocation();
   const isHomePage = location.pathname === "/";
-  
-  const [isScrolled, setIsScrolled] = useState(false);
+
+  const [isHidden, setIsHidden] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
-    if (!isHomePage) return; // Only run on the Home page
-
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50); // Change when scrolling past 50px
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY) {
+        setIsHidden(true);
+      } else {
+        setIsHidden(false);
+      }
+
+      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isHomePage]);
+  }, [lastScrollY]);
 
   return (
     <header
-      className={`z-10  w-full p-5 h-28 flex justify-between items-center px-24 transition-all duration-300 ${
+      className={`fixed top-0 z-10  w-full p-5 flex justify-between items-center px-24 transition-all duration-300 ease-in-out 
+      ${
         isHomePage
-          ? isScrolled
-            ? "fixed top-0 bg-white text-black shadow-md" // After scroll: White background, black text
-            : "fixed top-0 bg-transparent text-white h-28" // Initial: Transparent background, white text
-          : "bg-white text-black shadow-md z-20" // Other pages: White background, black text
+          ? lastScrollY <= 50
+            ? " bg-transparent text-white h-28"
+            : isHidden
+            ? "bg-transparent text-transparent h-0"
+            : "bg-white text-black h-28"
+          : isHidden
+          ? "bg-transparent text-transparent h-0"
+          : "bg-white text-black shadow-md z-20 h-28"
       }`}
+
+      // style={{trans}}
     >
       <Link to="/">
         <div className="flex flex-col text-center">
-          <h1 className="font-tenor text-6xl tracking-tight leading-none">ELEVATE</h1>
+          <h1 className="font-tenor text-6xl tracking-tight leading-none">
+            ELEVATE
+          </h1>
           <h2 className="text-lg font-tenor tracking-widest">REAL ESTATE</h2>
         </div>
       </Link>
@@ -44,15 +60,30 @@ export const Header = () => {
         </Link>
         <DropDown
           name="Buy"
-          links={[{ name: "Latest listings", link: "/listings/search?searchTerm=&type=Sell&sort=created_at&order=desc" }]}
+          links={[
+            {
+              name: "Latest listings",
+              link: "/listings/search?searchTerm=&type=Sell&sort=created_at&order=desc",
+            },
+          ]}
         />
         <DropDown
           name="Rent"
-          links={[{ name: "Latest listings", link: "/listings/search?searchTerm=&type=Rent&sort=created_at&order=desc" }]}
+          links={[
+            {
+              name: "Latest listings",
+              link: "/listings/search?searchTerm=&type=Rent&sort=created_at&order=desc",
+            },
+          ]}
         />
         <DropDown
           name="Sell"
-          links={[{ name: "Create listing", link: `${user ? "/listings/create" : "/sign-up"}` }]}
+          links={[
+            {
+              name: "Create listing",
+              link: `${user ? "/listings/create" : "/sign-up"}`,
+            },
+          ]}
         />
         <DropDown
           name="About us"
