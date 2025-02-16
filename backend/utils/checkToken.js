@@ -9,7 +9,7 @@ export function checkToken(req, res, next) {
     }
 
     console.log('token', token)
-    jwt.verify(token, process.env.SECRET, (err, user) => {
+    jwt.verify(token, process.env.SECRET || "somerandomkey", (err, user) => {
         if (err) {
             console.log('forbidden access')
             throw Error('Forbidden')

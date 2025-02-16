@@ -2,6 +2,7 @@ import { FaSearch } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import DropDown from "./DropDown";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -31,13 +32,13 @@ export const Header = () => {
     if (searchTermParams) {
       setSearchInput(searchTermParams);
     }
-  }, [location.search]);
+  }, []);
 
   return (
-    <header className="shadow-md bg-red-400">
+    <header className="shadow-sm bg-white p-5">
       <div className="flex justify-between items-center mx-auto p-3">
         <Link to="/">
-          <h1 className="ml-2 font-bold text-white">DreamDwell Realty</h1>
+          <h1 className="ml-2 font-bold text-black">DreamDwell Realty</h1>
         </Link>
         <form
           onSubmit={handleSearch}
@@ -55,6 +56,35 @@ export const Header = () => {
             <FaSearch className="text-slate-400 cursor-pointer" />
           </button>
         </form>
+        <DropDown name="Menu"
+          links={[
+            { name: "Home", link: "/" },
+            { name: "Sign In", link: "/sign-in" },
+            { name: "Sign Up", link: "/sign-up" },
+            { name: "Profile", link: "/profile" },
+            { name: "Create Listings", link: "/listings/create" },
+            { name: "Search Listings", link: "/listings/search" },
+          ]}
+        />
+
+        {/*
+        Home button
+        Buy
+        - Latest listings
+        Sell
+        - Sell with us
+        Rent
+        - Latest listings
+        About us
+        - About BOB real estate
+        - Privacy policy
+        Profile
+        - Sign in
+        - Sign up
+        - Profile
+
+        remove search bar
+        */}
         <nav>
           {user && (
             <div className="mr-2">
