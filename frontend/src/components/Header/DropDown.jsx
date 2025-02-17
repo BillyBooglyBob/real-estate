@@ -34,6 +34,7 @@ export const DropDown = ({ name, links }) => {
             key={link.name}
             variants={itemVariants}
             className="flex items-center justify-center font-medium text-sm"
+            onClick={link.onClick ? () => link.onClick() : undefined}
           >
             <Link
               to={link.link}

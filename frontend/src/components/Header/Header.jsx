@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { LOGOUT } from "../../redux/user";
+import axios from "axios";
 import DropDown from "./DropDown";
 
 export const Header = () => {
   const user = useSelector((state) => state.user.currentUser);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const location = useLocation();
   const isHomePage = location.pathname === "/";
 
@@ -28,6 +32,16 @@ export const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
+  const handleSignout = async () => {
+    try {
+      await axios.get("/api/auth/sign-out");
+      dispatch(LOGOUT());
+      navigate("/");
+    } catch (error) {
+      console.log("error");
+    }
+  };
+
   return (
     <header
       className={`fixed top-0 z-10  w-full p-5 flex justify-between items-center px-24 transition-all duration-300 ease-in-out 
@@ -42,8 +56,6 @@ export const Header = () => {
           ? "bg-transparent text-transparent h-0"
           : "bg-white text-black shadow-md z-20 h-28"
       }`}
-
-      // style={{trans}}
     >
       <Link to="/">
         <div className="flex flex-col text-center">
@@ -92,13 +104,25 @@ export const Header = () => {
             { name: "Privacy policy", link: "/" },
           ]}
         />
+        {/* Conditionally apply links depending on the current login state */}
         <DropDown
           name="Profile"
-          links={[
-            { name: "Sign In", link: "/sign-in" },
-            { name: "Sign Up", link: "/sign-up" },
-            { name: "Profile", link: "/profile" },
-          ]}
+          links={
+            !user
+              ? [
+                  { name: "Sign In", link: "/sign-in" },
+                  { name: "Sign Up", link: "/sign-up" },
+                  { name: "Profile", link: "/profile" },
+                ]
+              : [
+                  { name: "Profile", link: "/profile" },
+                  {
+                    name: "Sign Out",
+                    link: "/sign-out",
+                    onClick: handleSignout,
+                  },
+                ]
+          }
         />
       </nav>
     </header>
