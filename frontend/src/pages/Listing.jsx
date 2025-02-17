@@ -72,7 +72,7 @@ export const Listing = () => {
 
   return (
     <div className=" w-full flex flex-col">
-      <div className="pl-10 h-[30rem] w-full flex justify-between items-center flex-col sm:flex-row bg-gray-200">
+      <div className="pl-10 h-[30rem] w-full flex justify-between items-center flex-col sm:flex-row ">
         {/* Address, specifications and price */}
         <div className="w-1/3 order-2 sm:order-1 flex flex-col">
           <h1 className="text-3xl font-bold mt-5">{listingData.address}</h1>

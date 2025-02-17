@@ -88,7 +88,7 @@ export const SearchPage = () => {
   };
 
   return (
-    <div className="bg-gray-200 p-5 min-h-[32.7rem]">
+    <div className="p-5 min-h-[32.7rem]">
       {/* Search input and filters */}
       <div>
         <form

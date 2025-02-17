@@ -5,11 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { LOGIN } from "../redux/user";
 
-/**
- * Allow passable input props so formdata can be
- * kept within just AuthPage
- */
-
 const AuthForm = ({ title, actionUrl, inputs }) => {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(null);
@@ -47,27 +42,39 @@ const AuthForm = ({ title, actionUrl, inputs }) => {
   };
 
   return (
-    <div className="bg-gray-100 flex justify-center items-center min-h-screen w-full">
-      <div className="bg-white min-h-screen w-2/5 flex justify-center items-center flex-col gap-3 p-10 shadow-md">
-        <h1 className="text-2xl font-noto uppercase">{title}</h1>
+    <div className="flex justify-center items-center min-h-screen w-full">
+      <div className=" min-h-screen w-2/5 flex justify-center items-start flex-col gap-3 p-10">
+        <h1 className="text-2xl font-noto capitalize">{title}</h1>
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-5 min-w-full"
+          className="flex flex-col gap-5 w-full"
         >
           {inputs.map((input, index) => (
             <input
               key={index}
               {...input}
-              className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3"
+              className="border border-gray-600 focus:border-black rounded-sm p-2 pl-3"
               onChange={handleChange}
             />
           ))}
-          <button
-            disabled={loading}
-            className="bg-red-600 hover:bg-red-700 text-white rounded-lg p-2"
-          >
-            {title.toUpperCase()}
-          </button>
+          <div className="flex justify-between">
+            <div className="font-noto">
+              {title === "sign in"
+                ? "Don't have an account? "
+                : "Have an account? "}
+              <span className=" text-blue-600 font-noto">
+                <Link to={`/${title === "sign in" ? "sign-up" : "sign-in"}`}>
+                  {title === "sign in" ? "Sign up" : "Sign in"}
+                </Link>
+              </span>
+            </div>
+            <button
+              disabled={loading}
+              className="bg-red-600 hover:bg-red-700 text-white rounded-sm p-2 w-32"
+            >
+              {title.toUpperCase()}
+            </button>
+          </div>
           {error && (
             <div className="bg-red-400 p-2 rounded-lg text-white">
               {error.split("\n").map((line, index) => (
@@ -76,14 +83,6 @@ const AuthForm = ({ title, actionUrl, inputs }) => {
             </div>
           )}
         </form>
-        <div className="font-noto">
-          {title === "sign in" ? "Don't have an account? " : "Have an account? "}
-          <span className=" text-blue-600 font-noto">
-            <Link to={`/${title === "sign in" ? "sign-up" : "sign-in"}`}>
-              {title === "sign in" ? "Sign up" : "Sign in"}
-            </Link>
-          </span>
-        </div>
       </div>
     </div>
   );

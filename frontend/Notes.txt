@@ -1,0 +1,11 @@
+- remove profile page and keep them under the profile dropdown
+- UI
+    - SearchPage
+    - Listing
+    - CreateListings
+    - ViewListings
+- pagination & caching
+    - Redux (not sure if possible)
+    - Redis
+
+- should add in project description Redux used to save login details

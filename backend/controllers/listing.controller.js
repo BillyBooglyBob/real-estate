@@ -23,11 +23,13 @@ export const getListings = async (req, res) => {
         const type = req.query.type || 'Sell'
         const sort = req.query.sort || 'createdAt'
         const order = req.query.order || 'desc'
+        const limit = parseInt(req.query.limit) || 4
+        const startIndex = parseInt(req.query.startIndex) || 0
 
         const listings = await Listing.find({
             address: { $regex: searchTerm, $options: 'i' },
             type
-        }).sort({ [sort]: order })
+        }).sort({ [sort]: order }).limit(limit).skip(startIndex)
 
         return res.status(200).json(listings)
     } catch (error) {
