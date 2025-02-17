@@ -3,6 +3,7 @@ import { FaBed, FaCar, FaShower } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ListingItem from "../components/ListingItem";
+import { Pagination } from "../components/Pagination";
 
 export const SearchPage = () => {
   const navigate = useNavigate();
@@ -16,6 +17,12 @@ export const SearchPage = () => {
   });
 
   const [listings, setListings] = useState([]);
+  const [listingsProperties, setListingsProperties] = useState({
+    totalListings: 0,
+    totalPages: 0,
+    currentPage: 0,
+    itemsPerPage: 1,
+  });
   const [loading, setLoading] = useState(false);
 
   // change the filters when the corresponding input changes
@@ -47,6 +54,7 @@ export const SearchPage = () => {
     urlParams.set("order", filters.order);
 
     const searchQuery = urlParams.toString();
+
     navigate(`/listings/search?${searchQuery}`);
   };
 
@@ -54,6 +62,22 @@ export const SearchPage = () => {
   // also fetch new listings based on the new URL
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
+
+    // Pagination
+    // Fetch only specific number of items based on the page number
+    // reduces fetching cost
+    urlParams.set("limit", listingsProperties.itemsPerPage);
+    urlParams.set(
+      "startIndex",
+      listingsProperties.currentPage * listingsProperties.itemsPerPage
+    );
+
+    console.log("limit", listingsProperties.itemsPerPage);
+    console.log("current page", listingsProperties.currentPage);
+    console.log(
+      "urlParams after setting limit & start index",
+      urlParams.toString()
+    );
 
     const searchTermFromUrl = urlParams.get("searchTerm");
     const typeFromUrl = urlParams.get("type");
@@ -75,12 +99,14 @@ export const SearchPage = () => {
       const searchQuery = urlParams.toString();
       console.log("searchQuery", searchQuery);
       const res = await axios.get(`/api/listings/search?${searchQuery}`);
-      setListings(res.data);
+      const { listings, totalListings, totalPages } = res.data;
+      setListings(listings);
+      setListingsProperties((prev) => ({ ...prev, totalListings, totalPages }));
       setLoading(false);
     };
 
     getListings();
-  }, [location.search]);
+  }, [location.search, listingsProperties.currentPage]);
 
   // when user click on a listing, bring to the actual listings page
   const checkListing = (id) => {
@@ -90,6 +116,7 @@ export const SearchPage = () => {
   return (
     <div className="p-5 min-h-[32.7rem]">
       {/* Search input and filters */}
+
       <div>
         <form
           onSubmit={handleSubmit}
@@ -141,6 +168,9 @@ export const SearchPage = () => {
       {/* Search results */}
       <div className="ml-20 mb-10">
         <h1 className="text-3xl font-bold mt-10">Listings</h1>
+        <h1 className="text-3xl font-bold">
+          Results found: {listingsProperties.totalListings}
+        </h1>
         <div className="flex flex-wrap gap-5 mt-5">
           {loading ? (
             <h1>Loading ...</h1>
@@ -157,6 +187,12 @@ export const SearchPage = () => {
           )}
         </div>
       </div>
+
+      {/* Page numbers (Pagination) */}
+      <Pagination
+        listingsProperties={listingsProperties}
+        handleChangeListingProperties={setListingsProperties}
+      />
     </div>
   );
 };

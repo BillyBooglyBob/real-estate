@@ -26,12 +26,23 @@ export const getListings = async (req, res) => {
         const limit = parseInt(req.query.limit) || 4
         const startIndex = parseInt(req.query.startIndex) || 0
 
-        const listings = await Listing.find({
+        const query = {
             address: { $regex: searchTerm, $options: 'i' },
             type
-        }).sort({ [sort]: order }).limit(limit).skip(startIndex)
+        };
 
-        return res.status(200).json(listings)
+        const listings = await Listing.find(query)
+            .sort({ [sort]: order })
+            .limit(limit)
+            .skip(startIndex)
+
+        const totalListings = await Listing.countDocuments(query)
+
+        return res.status(200).json({
+            listings,
+            totalListings,
+            totalPages: Math.ceil(totalListings / limit)
+        })
     } catch (error) {
         res.status(500).json({ error: error })
     }

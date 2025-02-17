@@ -49,7 +49,7 @@ export const Listing = () => {
 
         // Get other listings as well
         const moreRes = await axios.get("/api/listings/search");
-        const listings = moreRes.data;
+        const { listings, totalListings, totalPages } = moreRes.data;
 
         // get the newest 3 listings
         setMoreListings(listings.length < 3 ? listings : listings.slice(0, 3));

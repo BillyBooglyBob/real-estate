@@ -14,7 +14,7 @@ const ListingsCarousel = () => {
     const getListings = async () => {
       try {
         const res = await axios.get("/api/listings/search");
-        const listings = res.data;
+        const { listings } = res.data;
         setListings(listings.length < 5 ? listings : listings.slice(0, 5));
       } catch (error) {
         console.error("Error fetching listings:", error);
