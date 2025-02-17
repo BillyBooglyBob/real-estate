@@ -9,6 +9,7 @@ import { ViewListings } from "./pages/ViewListings";
 import { Listing } from "./pages/Listing";
 import { SearchPage } from "./pages/SearchPage";
 import ScrollToTop from "./components/ScrollToTop.jsx";
+import Footer from "./components/Footer.jsx";
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
         and /listings/view will never be reached, always reaching /listings/:id instead */}
         <Route path="/listings/:id" element={<Listing />}></Route>
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 }

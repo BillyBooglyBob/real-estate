@@ -25,12 +25,12 @@ const ListingsCarousel = () => {
   }, []);
 
   const nextListing = () => {
-    setCurrentListing((prev) => (prev + 1) % (listings.length * 2));
+    setCurrentListing((prev) => (prev + 1) % listings.length);
     console.log(currentListing);
   };
 
   const prevListing = () => {
-    setCurrentListing((prev) => (prev - 1) % (listings.length * 2));
+    setCurrentListing((prev) => (prev - 1 + listings.length) % listings.length);
   };
 
   // when user clicks on a listing, bring to the actual listing page
@@ -43,8 +43,7 @@ const ListingsCarousel = () => {
       {/* Slider images */}
       {listings.length > 0 && (
         <div className="text-white flex w-full ml-28 overflow-hidden gap-x-8">
-          {/* Problem is correct positioning */}
-          {[...listings, ...listings].map((listing, index) => (
+          {[...listings].map((listing, index) => (
             <div
               key={listing._id}
               className={`transition-all duration-300 ease-in-out flex-shrink-0 w-[80%]`}
@@ -54,7 +53,7 @@ const ListingsCarousel = () => {
               onClick={() => goToListing(listing._id)}
             >
               {/* Listing image */}
-              <div className="w-full h-[600px] overflow-hidden relative cursor-pointer group">
+              <div className="w-full h-[550px] overflow-hidden relative cursor-pointer group">
                 <img
                   src={listing.imageUrls?.[0]}
                   alt={`listing-${index}`}
@@ -101,15 +100,13 @@ const ListingsCarousel = () => {
         </div>
 
         {/* Image buttons */}
-        <div className="flex gap-10">
+        <div className="flex gap-7">
           {listings.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentListing(index)}
-              className={`w-5 h-5 rounded-full ${
-                currentListing % listings.length == index
-                  ? "bg-white"
-                  : "bg-gray-600"
+              className={`w-10 h-1 rounded-full ${
+                currentListing == index ? "bg-white" : "bg-gray-600"
               }`}
             ></button>
           ))}

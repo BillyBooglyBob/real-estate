@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-
 import img1 from "../../assets/images/home page image carousel/1.png";
 import img2 from "../../assets/images/home page image carousel/2.png";
 import img3 from "../../assets/images/home page image carousel/3.png";
@@ -11,23 +10,25 @@ const images = [img1, img2, img3, img4, img5, img6];
 
 const InfiniteCarousel = () => {
   return (
-    <div className="relative w-[80%] overflow-hidden">
+    <div className="relative overflow-hidden w-[80%] py-5 bg-white">
       <motion.div
-        className="flex w-[200%]"
-        animate={{ x: [0, "-100%"] }}
+        className="flex w-max"
+        animate={{ x: ["0%", "-50%"] }}
         transition={{
           repeat: Infinity,
-          duration: images.length * 20,
+          duration: 15,
           ease: "linear",
         }}
       >
+        {/* Duplicate images for seamless looping */}
         {[...images, ...images].map((img, index) => (
-          <img
-            key={index}
-            src={img}
-            alt={`carousel-${index}`}
-            className="w-60 h-auto object-cover mx-16"
-          />
+          <div key={index} className="w-40 h-40 flex-shrink-0 mr-10">
+            <img
+              src={img}
+              alt={`carousel-${index}`}
+              className="w-[90%] h-full object-contain"
+            />
+          </div>
         ))}
       </motion.div>
     </div>
