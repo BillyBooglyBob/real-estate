@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { FaBed, FaCar, FaShower } from "react-icons/fa";
+import { CiSearch } from "react-icons/ci";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ListingItem from "../components/ListingItem";
 import { Pagination } from "../components/Pagination";
+import SearchFilter from "../components/SearchFilter.jsx";
 
 export const SearchPage = () => {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ export const SearchPage = () => {
     totalListings: 0,
     totalPages: 0,
     currentPage: 0,
-    itemsPerPage: 1,
+    itemsPerPage: 2,
   });
   const [loading, setLoading] = useState(false);
 
@@ -114,66 +115,75 @@ export const SearchPage = () => {
   };
 
   return (
-    <div className="p-5 min-h-[32.7rem]">
+    <div className="min-h-[32.7rem] mt-10">
       {/* Search input and filters */}
-
-      <div>
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col sm:flex-row gap-5 justify-between px-5 sm:px-20 mt-10"
-        >
-          <label>
-            <input
-              onChange={handleChange}
-              value={filters.searchTerm}
-              id="searchTerm"
-              type="text"
-              className="w-full min-w-64 sm:min-w-96 border border-gray-600 focus:border-black rounded-lg p-2 pl-3"
-            />
-          </label>
-          <div className="flex flex-col gap-5 sm:flex-row">
-            <label className="flex items-center gap-5">
-              Type:
-              <select
-                onChange={handleChange}
-                id="type"
-                className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3"
-                defaultValue={"Sell"}
-              >
-                <option value="Sell">Sell</option>
-                <option value="Rent">Rent</option>
-              </select>
-            </label>
-            <label className="flex items-center gap-5">
-              Sort by:
-              <select
-                onChange={handleChange}
-                id="sort_order"
-                defaultValue={"createdAt_desc"}
-                className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3"
-              >
-                <option value="price_desc">Price: High to Low</option>
-                <option value="price_asc">Price: Low to High</option>
-                <option value="createdAt_desc">Newest</option>
-                <option value="createdAt_asc">Oldest</option>
-              </select>
-            </label>
-            <button className="min-w-24 sm:min-w-32 p-2 bg-white hover:bg-gray-300 rounded-md">
-              Search
-            </button>
-          </div>
-        </form>
-      </div>
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col sm:flex-row gap-5 justify-between px-5 sm:px-20 mt-5 max-h-20"
+      >
+        <label className="relative border border-black focus:border-2">
+          <input
+            onChange={handleChange}
+            value={filters.searchTerm}
+            placeholder="Search for a property"
+            id="searchTerm"
+            type="text"
+            className="pl-10 w-full min-w-64 sm:min-w-96  p-2"
+          />
+          <CiSearch className="absolute left-3 top-3" />
+        </label>
+        <div className="flex flex-col gap-5 sm:flex-row">
+          <SearchFilter
+            value={filters.type === "Sell" ? "For sale" : "For rent"}
+            handleChange={(value) =>
+              setFilters((prev) => ({ ...prev, type: value }))
+            }
+            options={[
+              { value: "Sell", text: "For sale" },
+              { value: "Rent", text: "For rent" },
+            ]}
+          />
+          <SearchFilter
+            value={
+              filters.sort === "price" && filters.order === "desc"
+                ? "Price: High to Low"
+                : filters.sort === "price" && filters.order === "asc"
+                ? "Price: Low to High"
+                : filters.sort === "createdAt" && filters.order === "desc"
+                ? "Newest"
+                : "Oldest"
+            }
+            handleChange={(value) => {
+              const sort = value.split("_")[0];
+              const order = value.split("_")[1];
+              setFilters((prev) => ({ ...prev, sort, order }));
+            }}
+            options={[
+              { value: "price_desc", text: "Price: High to Low" },
+              { value: "price_asc", text: "Price: Low to High" },
+              { value: "createdAt_desc", text: "Newest" },
+              { value: "createdAt_asc", text: "Oldest" },
+            ]}
+          />
+          <button
+            className={`min-w-24 sm:min-w-32 p-2 bg-black text-white hover:brightness-125 rounded-sm`}
+          >
+            Search
+          </button>
+        </div>
+      </form>
 
       {/* Search results */}
-      <div className="ml-20 mb-10">
-        <h1 className="text-3xl font-bold mt-10">Listings</h1>
-        <h1 className="text-3xl font-bold">
-          Results found: {listingsProperties.totalListings}
+      <div className="pl-20 pb-10 ">
+        <h1 className="text-xl font-noto mt-10">
+          Real Estate & Homes for Sale
         </h1>
-        <div className="flex flex-wrap gap-5 mt-5">
+        <h1 className="text-base font-noto text-gray-500">
+          {listingsProperties.totalListings} results
+        </h1>
+        <div className="flex flex-wrap gap-5 mt-5 min-h-[200px]">
           {loading ? (
-            <h1>Loading ...</h1>
+            [1, 2].map((n) => <ListingItem loading={loading} key={n} />)
           ) : listings.length === 0 ? (
             <h1>No results</h1>
           ) : (
@@ -182,6 +192,7 @@ export const SearchPage = () => {
                 listing={listing}
                 checkListing={checkListing}
                 key={listing._id}
+                loading={loading}
               />
             ))
           )}

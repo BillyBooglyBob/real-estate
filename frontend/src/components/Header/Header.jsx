@@ -56,10 +56,10 @@ export const Header = () => {
             ? " bg-transparent text-white h-28"
             : isHidden
             ? "bg-transparent text-transparent h-0"
-            : "bg-white text-black h-28"
+            : "bg-gray-100 text-black h-28"
           : isHidden
           ? "bg-transparent text-transparent h-0"
-          : "bg-white text-black shadow-md z-20 h-28"
+          : "bg-gray-100 text-black z-20 h-28"
       }`}
       >
         <Link to="/">
