@@ -5,7 +5,7 @@ import {
 } from "react-icons/io";
 import { useEffect, useState } from "react";
 
-const ImagePopUp = ({
+const FullScreenGallery = ({
   handleClose,
   listingData,
   imageIndex,
@@ -73,7 +73,6 @@ const ImagePopUp = ({
       </div>
 
       {/* Image menu (next/prev, image index, exit) */}
-
       <div
         className={`transition-all duration-300 ease-in-out ${
           mouseMove ? "opacity-100" : "opacity-0"
@@ -105,7 +104,7 @@ const ImagePopUp = ({
   );
 };
 
-export default ImagePopUp;
+export default FullScreenGallery;
 
 const ImageNavigation = ({ direction, handleClick }) => {
   return (

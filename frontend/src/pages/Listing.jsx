@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import ImageCountButton from "../components/Listing/Button/ImageCountButton";
 import ImageMoveButtons from "../components/Listing/Button/ImageMoveButtons";
-import ImagePopUp from "../components/Listing/ImagePopUp";
+import FullScreenGallery from "../components/Listing/FullScreenGallery";
+import PreviewGallery from "../components/Listing/PreviewGallery";
+import Banner from "../components/Listing/Banner";
 
 export const Listing = () => {
   // Get the id of the webpage
@@ -26,7 +28,7 @@ export const Listing = () => {
   });
   // keep track of which image to currently display
   const [imageIndex, setImageIndex] = useState(0);
-  const [showImagePopUp, setShowImagePopUp] = useState(false);
+  const [showFullScreenGallery, setShowFullScreenGallery] = useState(false);
 
   // retrieve listing data using the id
   useEffect(() => {
@@ -50,21 +52,20 @@ export const Listing = () => {
   };
 
   // Handle pop up
-  const handleShowImagePopUp = () => {
-    setShowImagePopUp(true);
-    console.log("Show image pop up");
+  const handleShowFullScreenGallery = () => {
+    setShowFullScreenGallery(true);
   };
 
-  const handleHideImagePopUp = () => {
-    setShowImagePopUp(false);
+  const handleHideFullScreenGallery = () => {
+    setShowFullScreenGallery(false);
   };
 
   return (
     <div className="w-full h-full bg-[#faf9f2] pl-10 pt-20">
       {/* Image pop up */}
-      {showImagePopUp && (
-        <ImagePopUp
-          handleClose={handleHideImagePopUp}
+      {showFullScreenGallery && (
+        <FullScreenGallery
+          handleClose={handleHideFullScreenGallery}
           handleImageChange={handleImageChange}
           listingData={listingData}
           imageIndex={imageIndex}
@@ -76,34 +77,23 @@ export const Listing = () => {
       </div>
       <div className="flex h-[500px] md:flex-row flex-col">
         <div className="relative flex-[2] h-full">
-          <div className="relative overflow-hidden w-full h-full">
-            <div
-              className={`w-full h-full flex transition-transform duration-300 ease-in-out`}
-              style={{
-                transform: `translateX(-${imageIndex * 100}%)`,
-              }}
-              onClick={handleShowImagePopUp}
-            >
-              {listingData.imageUrls.map((src, index) => (
-                <img
-                  key={index}
-                  src={src}
-                  alt=""
-                  className={`w-full h-full object-cover flex-shrink-0 cursor-pointer
-                    hover:scale-105 transition-transform duration-300 ease-in-out`}
-                />
-              ))}
-            </div>
-          </div>
+          <PreviewGallery
+            imageIndex={imageIndex}
+            handleClick={handleShowFullScreenGallery}
+            listingData={listingData}
+          />
           <ImageMoveButtons handleImageChange={handleImageChange} />
           <ImageCountButton
             imageCount={listingData.imageUrls.length}
-            handleClick={handleShowImagePopUp}
+            handleClick={handleShowFullScreenGallery}
           />
         </div>
-        <div className="bg-[#595959] flex-1 h-full"></div>
+        <Banner listingData={listingData} />
       </div>
-      <div>Description + (Broker & Links)</div>
+      <div>
+        <div>{listingData.description}</div>
+        <div>Contact agent</div>
+      </div>
     </div>
   );
 };
