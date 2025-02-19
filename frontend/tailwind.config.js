@@ -10,6 +10,7 @@ export default {
         tenor: ["TenorSans", "sans-serif"],
         noto: ["NotoSans", "sans-serif"],
         beto: ["BetoGrande", "sans-serif"],
+        playfair: ["PlayFair", "sans-serif"],
       },
     },
   },

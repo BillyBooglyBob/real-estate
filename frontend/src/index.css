@@ -13,6 +13,11 @@
   src: url("./assets/fonts/BwBetoGrande-Regular.otf");
 }
 
+@font-face {
+  font-family: "PlayFair";
+  src: url("../assets/fonts/PlayfairDisplay-Regular.ttf");
+}
+
 
 @tailwind base;
 @tailwind components;

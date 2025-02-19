@@ -46,7 +46,7 @@ export const Header = () => {
     <div>
       {/* Extra div added to create space between the header and main content
       since the header is positioned absolutely */}
-      {!isHomePage && <div className="h-28"></div>}
+      {!isHomePage && <div className="h-28 bg-[#faf9f2]"></div>}
 
       <header
         className={`fixed top-0 z-10 w-full p-5 flex justify-between items-center px-24 transition-all duration-300 ease-in-out 
@@ -56,10 +56,10 @@ export const Header = () => {
             ? " bg-transparent text-white h-28"
             : isHidden
             ? "bg-transparent text-transparent h-0"
-            : "bg-gray-100 text-black h-28"
+            : "bg-[#faf9f2] text-black h-28"
           : isHidden
           ? "bg-transparent text-transparent h-0"
-          : "bg-gray-100 text-black z-20 h-28"
+          : "bg-[#faf9f2] text-black z-20 h-28"
       }`}
       >
         <Link to="/">

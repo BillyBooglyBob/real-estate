@@ -1,10 +1,16 @@
 - remove profile page and keep them under the profile dropdown
 - UI
-    - SearchPage
     - Listing
+        - Image carousel
+            - on the page
+            - clickable expanded
+        - Better description
+        - Better contact
+            - add contact form
     - CreateListings
+        - consider adding input fields
     - ViewListings
-- pagination & caching
+- caching
     - Redux (not sure if possible)
     - Redis
 
