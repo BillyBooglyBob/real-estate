@@ -65,19 +65,6 @@ export const Home = () => {
       <div>
         <ListingsCarousel />
       </div>
-
-      {/* <div className="pl-10 pt-10 pb-20">
-        <h1 className="font-semibold text-2xl mb-10">New listings</h1>
-        <div className="flex flex-col gap-5 sm:flex-row">
-          {newListings.map((listing) => (
-            <ListingItem
-              listing={listing}
-              checkListing={checkListing}
-              key={listing._id}
-            />
-          ))}
-        </div>
-      </div> */}
     </div>
   );
 };

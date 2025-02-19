@@ -38,7 +38,7 @@ export const DropDown = ({ name, links }) => {
           >
             <Link
               to={link.link}
-              className="text-black flex items-center w-full h-14 px-4 py-2 hover:bg-gray-200 transition-colors duration-200"
+              className="text-black flex items-center rounded-md w-full h-14 px-4 py-2 hover:bg-gray-100 transition-colors duration-200"
             >
               {link.name}
             </Link>

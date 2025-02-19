@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
+import { scrollToTopOfPage } from "../util/util";
 
 export const Pagination = ({
   listingsProperties,
   handleChangeListingProperties,
 }) => {
   const { currentPage, totalPages } = listingsProperties;
-  const navigate = useNavigate();
 
   if (totalPages <= 1) return null;
 
@@ -15,7 +15,17 @@ export const Pagination = ({
     handleChangeListingProperties((prev) => ({
       ...prev,
       currentPage: page - 1,
-    }))
+    }));
+
+    // Scroll function will not work when the new page is
+    // the start or end of the list.
+    // This is due to the button becoming immediately disabled
+    // after the state update, interfering with the scroll behavior.
+    // Using setTimeOut pushes the scroll to the next event loop,
+    // running the function after the state has been updated.
+    setTimeout(() => {
+      scrollToTopOfPage();
+    }, 0);
   };
 
   const generatePageNumbers = () => {
@@ -47,9 +57,10 @@ export const Pagination = ({
       <button
         onClick={() => handlePageChange(currentPage)}
         disabled={currentPage === 0}
-        className="p-2 border rounded disabled:opacity-50"
+        className={`p-2 w-16 border rounded hover:bg-black hover:text-white 
+          disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-inherit`}
       >
-        Previous
+        Prev
       </button>
 
       {generatePageNumbers().map((page, index) =>
@@ -57,9 +68,9 @@ export const Pagination = ({
           <button
             key={index}
             onClick={() => handlePageChange(page)}
-            className={`p-2 border rounded ${
-              currentPage + 1 === page ? "bg-gray-300" : ""
-            }`}
+            className={`p-2 border rounded w-10 ${
+              currentPage + 1 === page ? "bg-black text-white" : ""
+            } hover:bg-black hover:text-white`}
           >
             {page}
           </button>
@@ -73,7 +84,8 @@ export const Pagination = ({
       <button
         onClick={() => handlePageChange(currentPage + 2)}
         disabled={currentPage + 1 >= totalPages}
-        className="p-2 border rounded disabled:opacity-50"
+        className={`p-2 w-16 border rounded hover:bg-black hover:text-white
+          disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-inherit`}
       >
         Next
       </button>

@@ -1,8 +1,10 @@
-import { FaBed, FaCar, FaShower } from "react-icons/fa";
-import { CiLocationOn } from "react-icons/ci";
 import { motion } from "framer-motion";
+import { formatPrice } from "../util/util";
+import { useState } from "react";
 
 const ListingItem = ({ listing, checkListing, loading }) => {
+  const [showHover, setShowHover] = useState(false);
+
   return (
     <div
       onClick={() => {
@@ -10,24 +12,57 @@ const ListingItem = ({ listing, checkListing, loading }) => {
           checkListing(listing._id);
         }
       }}
-      className="hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col min-w-64 max-w-96 max-h-90 rounded-lg bg-white overflow-hidden relative"
+      onMouseEnter={() => setShowHover(true)}
+      onMouseLeave={() => setShowHover(false)}
+      className={`transition-all duration-300 relative
+        cursor-pointer flex flex-col 
+        bg-white overflow-hidden flex-1 w-full h-full`}
     >
+      {/* Hover overlay */}
+      <div
+        className={`absolute w-full h-full bg-white
+          ${showHover ? "opacity-80" : "opacity-0"}`}
+      ></div>
+
+      <div
+        className={`absolute w-full h-full 
+            transition-all duration-300 ease-in-out flex justify-center items-center
+            ${showHover ? "opacity-100" : "opacity-0"}`}
+      >
+        <button
+          className={`border-black border-[2px] w-48 h-12 uppercase
+              hover:bg-black hover:text-white transition-all duration-300 ease-in-out`}
+        >
+          View Property
+        </button>
+      </div>
+
+      {/* Image */}
       <motion.div
-        className="h-52 w-80 overflow-hidden"
+        className="w-full h-80 overflow-hidden"
         variants={shimmerVariants}
         animate={loading ? "animate" : "hidden"}
       >
         {!loading && (
-          <img
-            src={listing.imageUrls[0]}
-            alt="Property image"
-            className="object-cover h-52 w-80 hover:scale-105 transition-all duration-300"
-          />
+          <div>
+            <img
+              src={listing.imageUrls[0]}
+              alt="Property image"
+              className="object-cover w-full h-full"
+            />
+            <p
+              className={`font-tenor uppercase absolute top-0 right-0 w-28 flex items-center justify-center h-8
+                bg-black text-white`}
+            >
+              {listing.type}
+            </p>
+          </div>
         )}
       </motion.div>
 
+      {/* Description */}
       {loading ? (
-        <motion.div className="flex flex-col gap-3 p-3 z-10">
+        <motion.div className="flex flex-col gap-3 p-3">
           <div className="flex items-center gap-2 justify-between">
             <motion.div
               className="flex items-center gap-2 w-32 h-10"
@@ -52,28 +87,16 @@ const ListingItem = ({ listing, checkListing, loading }) => {
           ></motion.div>
         </motion.div>
       ) : (
-        <div className="flex flex-col gap-3 p-3 z-10">
-          <div className="flex items-center gap-2 justify-between">
-            <div className="flex items-center gap-2">
-              <CiLocationOn />
-              <p className="truncate">{listing.address}</p>
-            </div>
-            <div>
-              <p className="font-bold">For {listing.type}</p>
-            </div>
-          </div>
-          <p>${listing.price}</p>
-          <div className="flex gap-3">
-            <p className="flex gap-3">
-              <FaBed /> {listing.specifications.rooms}
-            </p>
-            <p className="flex gap-3">
-              <FaShower /> {listing.specifications.bathrooms}
-            </p>
-            <p className="flex gap-3">
-              <FaCar /> {listing.specifications.parkings}
-            </p>
-          </div>
+        <div className="flex flex-col gap-3 p-3 items-center">
+          <p className="truncate font-tenor text-2xl capitalize">
+            {listing.address}
+          </p>
+          <p className="font-noto">
+            {listing.specifications.rooms} BD |{" "}
+            {listing.specifications.bathrooms} BA |{" "}
+            {listing.specifications.parkings} PK
+          </p>
+          <p className="font-noto">{formatPrice(listing.price)}</p>
         </div>
       )}
     </div>

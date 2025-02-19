@@ -2,6 +2,7 @@ import { HiOutlineChevronDoubleUp } from "react-icons/hi";
 import { FaPhoneAlt } from "react-icons/fa";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { TfiEmail } from "react-icons/tfi";
+import { scrollToTopOfPage } from "../util/util";
 
 const Footer = () => {
   return (
@@ -32,7 +33,7 @@ const Footer = () => {
           className="absolute w-10 h-10 rotate-45 border-black border-[1px] bg-white 
              flex items-center justify-center hover:bg-black hover:text-white
              transition-all duration-300 ease-in-out"
-          onClick={() => window.scrollTo({top: 0, behavior: "smooth"})}
+          onClick={scrollToTopOfPage}
         >
           <HiOutlineChevronDoubleUp className="-rotate-45" />
         </button>

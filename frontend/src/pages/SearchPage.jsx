@@ -22,7 +22,7 @@ export const SearchPage = () => {
     totalListings: 0,
     totalPages: 0,
     currentPage: 0,
-    itemsPerPage: 2,
+    itemsPerPage: 4,
   });
   const [loading, setLoading] = useState(false);
 
@@ -115,11 +115,11 @@ export const SearchPage = () => {
   };
 
   return (
-    <div className="min-h-[32.7rem] mt-10">
+    <div className="min-h-72 mt-10 px-28">
       {/* Search input and filters */}
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col sm:flex-row gap-5 justify-between px-5 sm:px-20 mt-5 max-h-20"
+        className="flex flex-col sm:flex-row gap-5 justify-between mt-5 max-h-20"
       >
         <label className="relative border border-black focus:border-2">
           <input
@@ -174,14 +174,14 @@ export const SearchPage = () => {
       </form>
 
       {/* Search results */}
-      <div className="pl-20 pb-10 ">
+      <div className="pb-10">
         <h1 className="text-xl font-noto mt-10">
           Real Estate & Homes for Sale
         </h1>
         <h1 className="text-base font-noto text-gray-500">
           {listingsProperties.totalListings} results
         </h1>
-        <div className="flex flex-wrap gap-5 mt-5 min-h-[200px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-28 mt-5 min-h-[200px]">
           {loading ? (
             [1, 2].map((n) => <ListingItem loading={loading} key={n} />)
           ) : listings.length === 0 ? (
