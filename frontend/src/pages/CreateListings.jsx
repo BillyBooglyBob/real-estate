@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   getDownloadURL,
   getStorage,
@@ -6,11 +6,19 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+import { useJsApiLoader, StandaloneSearchBox } from "@react-google-maps/api";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 export const CreateListings = () => {
   const navigate = useNavigate();
+
+  const addressRef = useRef(null);
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: "AIzaSyBkfb8fn_iXQ_pwLoTH90o4vMTFIOu9Ouc",
+    libraries: ["places"],
+  });
 
   const [listingData, setListingData] = useState({
     imageUrls: [],
@@ -133,6 +141,12 @@ export const CreateListings = () => {
     }
   }, [files]);
 
+  // handle address change
+  const handleOnPlacesChanged = () => {
+    let address = addressRef.current.getPlaces();
+    console.log(address);
+  };
+
   return (
     <div className="w-full py-14 mx-auto bg-[#faf9f2] flex flex-col justify-center items-center">
       <h1 className="text-3xl font-bold text-center mb-3">Create listing</h1>
@@ -142,14 +156,22 @@ export const CreateListings = () => {
         <div className="flex flex-col gap-3">
           <label className="flex flex-col">
             Address
-            <input
-              type="text"
-              className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3"
-              placeholder="Address"
-              onChange={(e) =>
-                setListingData({ ...listingData, address: e.target.value })
-              }
-            />
+            {/* Google maps search box */}
+            {isLoaded && (
+              <StandaloneSearchBox
+                onLoad={(ref) => (addressRef.current = ref)}
+                onPlacesChanged={handleOnPlacesChanged}
+              >
+                <input
+                  type="text"
+                  className="border border-gray-600 w-full focus:border-black rounded-lg p-2 pl-3"
+                  placeholder="Address"
+                  onChange={(e) =>
+                    setListingData({ ...listingData, address: e.target.value })
+                  }
+                />
+              </StandaloneSearchBox>
+            )}
           </label>
           <label className="flex flex-col">
             Description
