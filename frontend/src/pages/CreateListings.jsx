@@ -10,14 +10,19 @@ import { useJsApiLoader, StandaloneSearchBox } from "@react-google-maps/api";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+// Define the libraries to be loaded for the google maps api
+// to prevent useJsApiLoader from reloading unnecessarily
+const googleLibraries = ["places"];
+
 export const CreateListings = () => {
   const navigate = useNavigate();
 
+  // Adding Google Map API address-search functionality
   const addressRef = useRef(null);
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAP_API,
-    libraries: ["places"],
+    libraries: googleLibraries,
   });
 
   const [listingData, setListingData] = useState({
@@ -80,7 +85,6 @@ export const CreateListings = () => {
     }
   };
 
-  // store image in firebase storage
   const storeImage = async (file) => {
     return new Promise((resolve, reject) => {
       const storage = getStorage(app);
@@ -126,8 +130,9 @@ export const CreateListings = () => {
       const res = await axios.post("/api/listings", listingData);
       setLoading(false);
       console.log(res.data);
-      navigate(`/listings/${res.data._id}`);
+
       // navigate to the current user listings
+      navigate(`/listings/${res.data._id}`);
     } catch (error) {
       setError(error.response.data.error);
       setLoading(false);
@@ -143,10 +148,11 @@ export const CreateListings = () => {
 
   // handle address change
   const handleOnPlacesChanged = () => {
-    let address = addressRef.current.getPlaces();
-    console.log(address);
+    const newAddress = addressRef.current.getPlaces()[0].formatted_address;
+    console.log(newAddress);
+    setListingData((prev) => ({ ...prev, address: newAddress }));
   };
-
+  
   return (
     <div className="w-full py-14 mx-auto bg-[#faf9f2] flex flex-col justify-center items-center">
       <h1 className="text-3xl font-bold text-center mb-3">Create listing</h1>
@@ -168,7 +174,10 @@ export const CreateListings = () => {
                   className="border border-gray-600 w-full focus:border-black rounded-lg p-2 pl-3"
                   placeholder="Address"
                   onChange={(e) =>
-                    setListingData({ ...listingData, address: e.target.value })
+                    setListingData((prev) => ({
+                      ...prev,
+                      address: e.target.value,
+                    }))
                   }
                 />
               </StandaloneSearchBox>
@@ -181,7 +190,10 @@ export const CreateListings = () => {
               className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3"
               placeholder="Description"
               onChange={(e) =>
-                setListingData({ ...listingData, description: e.target.value })
+                setListingData((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
               }
             />
           </label>
@@ -192,7 +204,10 @@ export const CreateListings = () => {
               className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3"
               placeholder="$100000"
               onChange={(e) =>
-                setListingData({ ...listingData, price: e.target.value })
+                setListingData((prev) => ({
+                  ...prev,
+                  price: e.target.value,
+                }))
               }
             />
           </label>
@@ -201,7 +216,7 @@ export const CreateListings = () => {
               Listing Type
               <select
                 onChange={(e) =>
-                  setListingData({ ...listingData, type: e.target.value })
+                  setListingData((prev) => ({ ...prev, type: e.target.value }))
                 }
                 className="border border-gray-600 focus:border-black rounded-md min-h-10"
               >
@@ -216,13 +231,13 @@ export const CreateListings = () => {
                 className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3 max-w-20"
                 placeholder="Beds"
                 onChange={(e) =>
-                  setListingData({
-                    ...listingData,
+                  setListingData((prev) => ({
+                    ...prev,
                     specifications: {
-                      ...listingData.specifications,
+                      ...prev.specifications,
                       rooms: e.target.value,
                     },
-                  })
+                  }))
                 }
               />
             </label>
@@ -233,13 +248,13 @@ export const CreateListings = () => {
                 className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3 max-w-20"
                 placeholder="Baths"
                 onChange={(e) =>
-                  setListingData({
-                    ...listingData,
+                  setListingData((prev) => ({
+                    ...prev,
                     specifications: {
-                      ...listingData.specifications,
+                      ...prev.specifications,
                       bathrooms: e.target.value,
                     },
-                  })
+                  }))
                 }
               />
             </label>
@@ -250,13 +265,13 @@ export const CreateListings = () => {
                 className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3 max-w-20"
                 placeholder="Parkings"
                 onChange={(e) =>
-                  setListingData({
-                    ...listingData,
+                  setListingData((prev) => ({
+                    ...prev,
                     specifications: {
-                      ...listingData.specifications,
+                      ...prev.specifications,
                       parkings: e.target.value,
                     },
-                  })
+                  }))
                 }
               />
             </label>

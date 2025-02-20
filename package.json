@@ -21,7 +21,7 @@
     "start": "node backend/app.js",
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
     "watch": "NODE_OPTIONS=--experimental-vm-modules npx jest --watchAll",
-    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend && npm start"
+    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
   },
   "keywords": [],
   "author": "",
