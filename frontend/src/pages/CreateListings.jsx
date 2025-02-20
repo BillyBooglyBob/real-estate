@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   getDownloadURL,
   getStorage,
@@ -126,8 +126,15 @@ export const CreateListings = () => {
     }
   };
 
+  // Upload images automatically when new images are added
+  useEffect(() => {
+    if (files.length > 0) {
+      handleImageSubmit();
+    }
+  }, [files]);
+
   return (
-    <div className="max-w-3xl py-14 mx-auto">
+    <div className="w-full py-14 mx-auto bg-[#faf9f2] flex flex-col justify-center items-center">
       <h1 className="text-3xl font-bold text-center mb-3">Create listing</h1>
       {/* Listing form */}
       <form onSubmit={handleSubmit} className="flex gap-4 flex-col sm:flex-row">
@@ -237,9 +244,11 @@ export const CreateListings = () => {
           <h1>Upload images</h1>
           <div className="flex gap-5">
             <label className="inline-flex justify-center p-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm cursor-pointer hover:bg-gray-300">
-              <span>Choose Images</span>
+              <span>{uploading ? "Uploading..." : "Choose Images"}</span>
               <input
-                onChange={(e) => setFiles(e.target.files)}
+                onChange={(e) => {
+                  setFiles(e.target.files);
+                }}
                 type="file"
                 accept="image/*"
                 multiple
@@ -247,14 +256,6 @@ export const CreateListings = () => {
                 placeholder="Parkings"
               />
             </label>
-            <button
-              type="button"
-              disabled={uploading}
-              onClick={handleImageSubmit}
-              className=" min-w-32 p-2 bg-gray-400 hover:bg-gray-500 rounded-md"
-            >
-              {uploading ? "Uploading..." : "Upload Images"}
-            </button>
           </div>
           <p className="text-red-700">{imageUploadError && imageUploadError}</p>
           {listingData.imageUrls.length > 0 &&

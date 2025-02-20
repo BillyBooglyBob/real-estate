@@ -1,5 +1,5 @@
-- remove profile page and keep them under the profile dropdown
 - UI
+    - Home page scroll animation
     - Listing
         - add contact form
     - CreateListings

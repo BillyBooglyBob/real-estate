@@ -110,7 +110,7 @@ export const Listing = () => {
       {/* Description & Contact Agent Section */}
       <div className="flex flex-col md:flex-row  ">
         {/* Left: Description */}
-        <div className="md:w-[60%] w-full p-12 text-[#595959] bg-[#faf9f2]flex flex-col gap-5">
+        <div className="md:w-[60%] w-full p-12 text-[#595959] bg-[#faf9f2] flex flex-col gap-5">
           <Reveal>
             <h1 className="text-2xl font-bold mb-2">Description</h1>
           </Reveal>
