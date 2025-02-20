@@ -16,7 +16,7 @@ export const CreateListings = () => {
   const addressRef = useRef(null);
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: "AIzaSyBkfb8fn_iXQ_pwLoTH90o4vMTFIOu9Ouc",
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAP_API,
     libraries: ["places"],
   });
 
@@ -150,6 +150,7 @@ export const CreateListings = () => {
   return (
     <div className="w-full py-14 mx-auto bg-[#faf9f2] flex flex-col justify-center items-center">
       <h1 className="text-3xl font-bold text-center mb-3">Create listing</h1>
+      <h1></h1>
       {/* Listing form */}
       <form onSubmit={handleSubmit} className="flex gap-4 flex-col sm:flex-row">
         {/* Listing details */}
