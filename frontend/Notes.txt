@@ -1,12 +1,7 @@
 - remove profile page and keep them under the profile dropdown
 - UI
     - Listing
-        - Image carousel
-            - on the page
-            - clickable expanded
-        - Better description
-        - Better contact
-            - add contact form
+        - add contact form
     - CreateListings
         - consider adding input fields
     - ViewListings

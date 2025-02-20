@@ -120,7 +120,8 @@ export const Header = () => {
                     { name: "Profile", link: "/profile" },
                   ]
                 : [
-                    { name: "Profile", link: "/profile" },
+                    { name: "Create Listing", link: "/listings/create" },
+                    { name: "View Listings", link: "/listings/view" },
                     {
                       name: "Sign Out",
                       link: "/sign-out",
