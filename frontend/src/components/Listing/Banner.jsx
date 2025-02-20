@@ -6,7 +6,7 @@ import { formatPrice } from "../../util/util";
 
 const Banner = ({ listingData }) => {
   return (
-    <div className="bg-[#595959] flex-1 h-full text-[#faf9f2] p-8 flex flex-col">
+    <div className="bg-[#595959] h-full text-[#faf9f2] p-8 flex flex-col">
       {/* Specifications & price */}
       <div className="flex-[2] flex flex-col justify-evenly">
         <div className="font-tenor flex items-center gap-5 text-3xl">

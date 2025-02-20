@@ -6,7 +6,7 @@ import { scrollToTopOfPage } from "../util/util";
 
 const Footer = () => {
   return (
-    <div className="flex flex-col items-center justify-center p-16">
+    <div className="flex flex-col items-center justify-center p-16 bg-[#faf9f2] ">
       <div className="uppercase font-tenor text-3xl w-full mb-10">
         elevate real estate
       </div>
