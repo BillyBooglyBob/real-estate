@@ -9,6 +9,9 @@ import { app } from "../firebase";
 import { useJsApiLoader, StandaloneSearchBox } from "@react-google-maps/api";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Input from "../components/CreateListing/Input";
+import { formatPrice } from "../util/util";
+import DropDown from "../components/CreateListing/DropDown";
 
 // Define the libraries to be loaded for the google maps api
 // to prevent useJsApiLoader from reloading unnecessarily
@@ -149,136 +152,95 @@ export const CreateListings = () => {
   // handle address change
   const handleOnPlacesChanged = () => {
     const newAddress = addressRef.current.getPlaces()[0].formatted_address;
-    console.log(newAddress);
     setListingData((prev) => ({ ...prev, address: newAddress }));
   };
-  
+
+  console.log(listingData);
+
   return (
     <div className="w-full py-14 mx-auto bg-[#faf9f2] flex flex-col justify-center items-center">
-      <h1 className="text-3xl font-bold text-center mb-3">Create listing</h1>
-      <h1></h1>
+      <h1 className="text-3xl font-bold text-center mb-3 flex justify-start items-center w-[50%]">
+        Create listing
+      </h1>
       {/* Listing form */}
-      <form onSubmit={handleSubmit} className="flex gap-4 flex-col sm:flex-row">
-        {/* Listing details */}
-        <div className="flex flex-col gap-3">
-          <label className="flex flex-col">
-            Address
-            {/* Google maps search box */}
-            {isLoaded && (
-              <StandaloneSearchBox
-                onLoad={(ref) => (addressRef.current = ref)}
-                onPlacesChanged={handleOnPlacesChanged}
-              >
-                <input
-                  type="text"
-                  className="border border-gray-600 w-full focus:border-black rounded-lg p-2 pl-3"
-                  placeholder="Address"
-                  onChange={(e) =>
-                    setListingData((prev) => ({
-                      ...prev,
-                      address: e.target.value,
-                    }))
-                  }
-                />
-              </StandaloneSearchBox>
-            )}
-          </label>
-          <label className="flex flex-col">
-            Description
-            <textarea
-              type="text"
-              className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3"
-              placeholder="Description"
-              onChange={(e) =>
-                setListingData((prev) => ({
-                  ...prev,
-                  description: e.target.value,
-                }))
-              }
+      <form
+        onSubmit={handleSubmit}
+        className="flex gap-4 flex-col sm:flex-row w-[50%]"
+      >
+        {/* Listing details & Create button */}
+        <div className="flex flex-col gap-3 flex-[2] h-full">
+          {/* Google maps search box */}
+          {isLoaded && (
+            <StandaloneSearchBox
+              onLoad={(ref) => (addressRef.current = ref)}
+              onPlacesChanged={handleOnPlacesChanged}
+            >
+              <Input
+                handleChange={setListingData}
+                inputType="text"
+                placeholder="Address"
+                inputField={listingData.address}
+                inputFieldType="address"
+              />
+            </StandaloneSearchBox>
+          )}
+          <Input
+            handleChange={setListingData}
+            placeholder="Description"
+            inputField={listingData.description}
+            inputFieldType="description"
+            inputType="textarea"
+          />
+          <Input
+            handleChange={setListingData}
+            placeholder="Price"
+            inputField={listingData.price}
+            inputFieldType="price"
+            inputType="text"
+          />
+          <div className="flex gap-5 justify-between">
+            <DropDown
+              options={[
+                { value: "Sell", description: "For Sale" },
+                { value: "Rent", description: "For Rent" },
+              ]}
+              handleChange={setListingData}
+              value={listingData.type === "Sell" ? "For Sale" : "For Rent"}
             />
-          </label>
-          <label className="flex flex-col">
-            Price $
-            <input
-              type="number"
-              className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3"
-              placeholder="$100000"
-              onChange={(e) =>
-                setListingData((prev) => ({
-                  ...prev,
-                  price: e.target.value,
-                }))
-              }
+            <Input
+              handleChange={setListingData}
+              placeholder="Beds"
+              inputField={listingData.specifications.rooms}
+              inputFieldType="rooms"
+              inputType="number"
             />
-          </label>
-          <div className="flex gap-10">
-            <label className="flex flex-col">
-              Listing Type
-              <select
-                onChange={(e) =>
-                  setListingData((prev) => ({ ...prev, type: e.target.value }))
-                }
-                className="border border-gray-600 focus:border-black rounded-md min-h-10"
-              >
-                <option value="Sell">Sell</option>
-                <option value="Rent">Rent</option>
-              </select>
-            </label>
-            <label className="flex flex-col">
-              Beds
-              <input
-                type="number"
-                className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3 max-w-20"
-                placeholder="Beds"
-                onChange={(e) =>
-                  setListingData((prev) => ({
-                    ...prev,
-                    specifications: {
-                      ...prev.specifications,
-                      rooms: e.target.value,
-                    },
-                  }))
-                }
-              />
-            </label>
-            <label className="flex flex-col">
-              Baths
-              <input
-                type="number"
-                className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3 max-w-20"
-                placeholder="Baths"
-                onChange={(e) =>
-                  setListingData((prev) => ({
-                    ...prev,
-                    specifications: {
-                      ...prev.specifications,
-                      bathrooms: e.target.value,
-                    },
-                  }))
-                }
-              />
-            </label>
-            <label className="flex flex-col">
-              Parkings
-              <input
-                type="number"
-                className="border border-gray-600 focus:border-black rounded-lg p-2 pl-3 max-w-20"
-                placeholder="Parkings"
-                onChange={(e) =>
-                  setListingData((prev) => ({
-                    ...prev,
-                    specifications: {
-                      ...prev.specifications,
-                      parkings: e.target.value,
-                    },
-                  }))
-                }
-              />
-            </label>
+            <Input
+              handleChange={setListingData}
+              placeholder="Bathrooms"
+              inputField={listingData.specifications.bathrooms}
+              inputFieldType="bathrooms"
+              inputType="number"
+            />
+            <Input
+              handleChange={setListingData}
+              placeholder="Parkings"
+              inputField={listingData.specifications.parkings}
+              inputFieldType="parkings"
+              inputType="number"
+            />
           </div>
+          <button
+            disabled={loading}
+            className="inline-flex justify-center p-2 bg-red-600 hover:bg-red-700 text-white"
+          >
+            {loading ? "Creating..." : "Create"}
+          </button>
+          {error && (
+            <p className=" bg-red-400 p-2 rounded-lg text-white">{error}</p>
+          )}
         </div>
-        {/* Upload images and Create button */}
-        <div className="flex flex-col mx-auto gap-3">
+        {/* Upload images and */}
+        <div className="flex flex-col mx-auto gap-3 flex-[1]">
           <h1>Upload images</h1>
           <div className="flex gap-5">
             <label className="inline-flex justify-center p-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm cursor-pointer hover:bg-gray-300">
@@ -313,15 +275,6 @@ export const CreateListings = () => {
                 </button>
               </div>
             ))}
-          <button
-            disabled={loading}
-            className="inline-flex justify-center p-2 bg-red-600 hover:bg-red-700 text-white"
-          >
-            {loading ? "Creating..." : "Create"}
-          </button>
-          {error && (
-            <p className=" bg-red-400 p-2 rounded-lg text-white">{error}</p>
-          )}
         </div>
       </form>
     </div>
