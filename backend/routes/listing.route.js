@@ -5,6 +5,7 @@ import {
   getListing,
   getListings,
   getUserListings,
+  updateListing,
 } from "../controllers/listing.controller.js";
 import { checkToken } from "../utils/checkToken.js";
 
@@ -28,5 +29,8 @@ router.get("/view/:email", getUserListings);
 // delete the selected listing
 // Runs middleware checkToken to ensure the user is logged in
 router.post("/:id", checkToken, deleteListing);
+
+// // update the selected listing
+router.put("/:id", checkToken, updateListing);
 
 export default router;

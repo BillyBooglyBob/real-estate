@@ -1,10 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import ImageCountButton from "../components/Listing/Button/ImageCountButton";
-import ImageMoveButtons from "../components/Listing/Button/ImageMoveButtons";
-import FullScreenGallery from "../components/FullScreenGallery";
-import PreviewGallery from "../components/Listing/PreviewGallery";
+import PreviewGallery from "../components/Gallery/PreviewGallery";
 import Banner from "../components/Listing/Banner";
 import Reveal from "../components/Listing/Animate/Reveal";
 
@@ -33,10 +30,6 @@ export const Listing = () => {
       username: "",
     },
   });
-  // keep track of which image to currently display
-  const [imageIndex, setImageIndex] = useState(0);
-  // keep track of whether to show the full screen gallery
-  const [showFullScreenGallery, setShowFullScreenGallery] = useState(false);
 
   // Retrieve listing data using the id
   useEffect(() => {
@@ -54,31 +47,9 @@ export const Listing = () => {
   }, [id]);
 
   // Handle changing the current image displayed
-  const handleImageChange = (change) => {
-    const newIndex = (imageIndex + change) % listingData.imageUrls.length;
-    setImageIndex(newIndex >= 0 ? newIndex : listingData.imageUrls.length - 1);
-  };
-
-  // Handle showing the full screen gallery
-  const handleShowFullScreenGallery = () => {
-    setShowFullScreenGallery(true);
-  };
-
-  const handleHideFullScreenGallery = () => {
-    setShowFullScreenGallery(false);
-  };
 
   return (
     <div className="w-full h-full bg-[#faf9f2] pl-10 pt-20 flex flex-col">
-      {/* Image pop up */}
-      {showFullScreenGallery && (
-        <FullScreenGallery
-          handleClose={handleHideFullScreenGallery}
-          handleImageChange={handleImageChange}
-          images={listingData.imageUrls}
-          imageIndex={imageIndex}
-        />
-      )}
       <Reveal>
         <div className="font-beto font-semibold text-wrap max-w-[600px] text-4xl text-gray-600 mb-8">
           {listingData.address}
@@ -88,23 +59,12 @@ export const Listing = () => {
       <div className="flex md:h-[500px] h-[400px] flex-col md:flex-row">
         {/* Left: PreviewGallery */}
         <div className="relative md:w-[60%] w-full h-full">
-          <PreviewGallery
-            imageIndex={imageIndex}
-            handleClick={handleShowFullScreenGallery}
-            listingData={listingData}
-          />
-          <ImageMoveButtons handleImageChange={handleImageChange} />
-          <ImageCountButton
-            imageCount={listingData.imageUrls.length}
-            handleClick={handleShowFullScreenGallery}
-          />
+          <PreviewGallery images={listingData.imageUrls} />
         </div>
 
         {/* Right: Banner */}
         <div className="md:w-[40%] w-full h-full">
-
-            <Banner listingData={listingData} />
-
+          <Banner listingData={listingData} />
         </div>
       </div>
       {/* Description & Contact Agent Section */}

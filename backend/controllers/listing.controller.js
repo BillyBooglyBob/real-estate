@@ -125,3 +125,17 @@ export const deleteListing = async (req, res) => {
         res.status(500).json({ error: error.message })
     }
 }
+
+// update the listing
+export const updateListing = async (req, res) => {
+    try {
+        const id = req.params.id
+        // use the current signed in user's id as the seller
+        const inputs = { ...req.body, seller: req.user.id }
+        const newListing = await Listing.createNewListing(inputs)
+
+        res.status(200).json(newListing)
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+}

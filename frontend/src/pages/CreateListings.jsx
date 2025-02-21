@@ -160,7 +160,7 @@ export const CreateListings = () => {
 
   return (
     <div className="w-full py-14 mx-auto bg-[#faf9f2] flex flex-col justify-center items-center">
-      <h1 className="text-3xl font-bold text-center mb-3 flex justify-start items-center w-[50%]">
+      <h1 className="text-3xl font-tenor text-center mb-3 flex justify-start items-center w-[50%]">
         Create listing
       </h1>
       {/* Listing form */}

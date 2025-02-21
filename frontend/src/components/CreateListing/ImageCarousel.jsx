@@ -1,5 +1,5 @@
 import { useState } from "react";
-import FullScreenGallery from "../FullScreenGallery";
+import FullScreenGallery from "../Gallery/FullScreenGallery";
 import { motion } from "framer-motion";
 
 const ImageCarousel = ({ images, handleClick }) => {
@@ -23,7 +23,7 @@ const ImageCarousel = ({ images, handleClick }) => {
           images={images}
           imageIndex={imageIndex}
           handleImageChange={handleImageChange}
-          handleDelete={() => handleClick(imageIndex)}
+          handleDeleteImage={() => handleClick(imageIndex)}
         />
       )}
       {images.map((url, index) => (

@@ -2,6 +2,16 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { formatPrice } from "../util/util";
+import { motion } from "framer-motion";
+
+import { BiSolidBath } from "react-icons/bi";
+import { IoBed } from "react-icons/io5";
+import { FaCarAlt } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
+import { MdEditNote } from "react-icons/md";
+import { MdViewStream } from "react-icons/md";
+import PreviewGallery from "../components/Gallery/PreviewGallery";
 
 export const ViewListings = () => {
   // Get all the listings of the current logged in user
@@ -43,50 +53,95 @@ export const ViewListings = () => {
   };
 
   return (
-    <div className="mt-5 ml-20 p-14">
-      <h1 className="mb-5 text-4xl font-extrabold">User Listings</h1>
+    <div className="p-14 bg-[#faf9f2] w-full h-full">
+      <h1 className="mb-5 text-3xl font-tenor">User Listings</h1>
       {/* User listings */}
       {listings.length === 0 && <div>No listings</div>}
-      {listings.map((listing) => (
-        <div
-          key={listing._id}
-          className="flex flex-row justify-between gap-5 w-96 max-h-62 p-5 mb-5 border border-gray-700 rounded-lg"
-        >
+      <div className="grid grid-cols-2 gap-5">
+        {listings.map((listing) => (
           <div
-            onClick={() => checkListing(listing._id)}
-            className="flex gap-5 items-center cursor-pointer"
+            key={listing._id}
+            className="flex flex-col justify-between gap-5 w-full h-full p-5 mb-5 border border-gray-700 rounded-sm"
           >
-            {/* Listing details */}
-            <div>
-              <h1 className="font-bold">Address:</h1>
-              <p>{listing.address}</p>
-              <div>
-                <h1 className="font-bold">Rooms:</h1>
-                <p>{listing.specifications.rooms}</p>
-                <h1 className="font-bold">Bathrooms:</h1>
-                <p>{listing.specifications.bathrooms}</p>
-                <h1 className="font-bold">Parkings:</h1>
-                <p>{listing.specifications.parkings}</p>
-              </div>
-              <p>${listing.price}</p>
-            </div>
-            {/* Listing first image */}
-            <img
-              src={listing.imageUrls[0]}
-              alt="Property image"
-              className="object-cover rounded-lg w-32 h-32"
-            />
-          </div>
+            {/* Listing images */}
+            <PreviewGallery images={listing.imageUrls} />
 
-          {/* Delete button */}
-          <button
-            onClick={() => handleDeleteListing(listing._id)}
-            className="text-red-700 uppercase hover:opacity-75"
-          >
-            Delete
-          </button>
-        </div>
-      ))}
+            {/* Listing details */}
+            <div className="grid grid-cols-2 gap-5">
+              <div className="flex flex-col gap-5">
+                <div>
+                  <h1 className="font-beto font-semibold text-xl">
+                    {listing.address}
+                  </h1>
+                </div>
+                <h1 className="font-beto font-semibold text-xl">
+                  {formatPrice(listing.price)}
+                </h1>
+              </div>
+              <div className="flex gap-5 items-center justify-end">
+                <div>
+                  <h2 className="flex items-center justify-end gap-5 text-xl">
+                    <IoBed className="w-7 h-7" /> {listing.specifications.rooms}
+                  </h2>
+                </div>
+                <div>
+                  <h2 className="flex items-center justify-end gap-5 text-xl">
+                    <BiSolidBath className="w-7 h-7" />{" "}
+                    {listing.specifications.bathrooms}
+                  </h2>
+                </div>
+                <div>
+                  <h2 className="flex items-center justify-end gap-5 text-xl">
+                    <FaCarAlt className="w-7 h-7" />{" "}
+                    {listing.specifications.parkings}
+                  </h2>
+                </div>
+              </div>
+            </div>
+
+            {/* View, Edit, Delete buttons */}
+            <div className={buttonStyle.container}>
+              <MenuButton
+                handleClick={() => checkListing(listing._id)}
+                title="View Listing"
+              >
+                <MdViewStream />
+              </MenuButton>
+
+              <MenuButton title="Edit Listing">
+                <MdEditNote />
+              </MenuButton>
+
+              <MenuButton
+                handleClick={() => handleDeleteListing(listing._id)}
+                title="Delete Listing"
+              >
+                <MdDelete />
+              </MenuButton>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
+};
+
+const MenuButton = ({ children, handleClick, title }) => {
+  return (
+    <motion.button
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      transition={{ duration: 0.1 }}
+      onClick={handleClick}
+      className={buttonStyle.button}
+      title={title}
+    >
+      {children}
+    </motion.button>
+  );
+};
+
+const buttonStyle = {
+  container: "flex justify-between items-center",
+  button: "text-[#595959] uppercase px-3 py-2 rounded-sm text-2xl",
 };

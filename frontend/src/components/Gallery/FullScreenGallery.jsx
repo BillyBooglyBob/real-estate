@@ -11,7 +11,7 @@ const FullScreenGallery = ({
   images,
   imageIndex,
   handleImageChange,
-  handleDelete,
+  handleDeleteImage,
 }) => {
   const [mouseMove, setMouseMove] = useState(false);
 
@@ -97,10 +97,22 @@ const FullScreenGallery = ({
           className={`absolute top-0 right-0 text-white   w-24 h-12
             flex justify-center items-center gap-2`}
         >
-          <button type="button" onClick={handleDelete} title="Delete" className="bg-gray-600 h-full w-full flex-1 flex justify-center items-center">
-            <MdDelete className="w-5 h-5" />
-          </button>
-          <button type="button" onClick={handleClose} title="Close" className="bg-gray-600 h-full w-full flex-1 flex justify-center items-center">
+          {handleDeleteImage && (
+            <button
+              type="button"
+              onClick={handleDeleteImage}
+              title="Delete"
+              className="bg-gray-600 h-full w-[50%]  flex justify-center items-center"
+            >
+              <MdDelete className="w-5 h-5" />
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={handleClose}
+            title="Close"
+            className="bg-gray-600 h-full w-[50%]  flex justify-center items-center"
+          >
             <IoMdClose className="w-5 h-5" />
           </button>
         </div>
