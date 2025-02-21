@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import Input from "../components/CreateListing/Input";
 import { formatPrice } from "../util/util";
 import DropDown from "../components/CreateListing/DropDown";
+import ImageCarousel from "../components/CreateListing/ImageCarousel";
 
 // Define the libraries to be loaded for the google maps api
 // to prevent useJsApiLoader from reloading unnecessarily
@@ -241,40 +242,26 @@ export const CreateListings = () => {
         </div>
         {/* Upload images and */}
         <div className="flex flex-col mx-auto gap-3 flex-[1]">
-          <h1>Upload images</h1>
-          <div className="flex gap-5">
-            <label className="inline-flex justify-center p-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm cursor-pointer hover:bg-gray-300">
-              <span>{uploading ? "Uploading..." : "Choose Images"}</span>
-              <input
-                onChange={(e) => {
-                  setFiles(e.target.files);
-                }}
-                type="file"
-                accept="image/*"
-                multiple
-                className="hidden"
-                placeholder="Parkings"
-              />
-            </label>
-          </div>
+          <label className="w-full inline-flex justify-center p-2 bg-gray-200 border border-gray-300 rounded-sm shadow-sm cursor-pointer hover:bg-gray-300">
+            <span>{uploading ? "Uploading..." : "Upload Images"}</span>
+            <input
+              onChange={(e) => {
+                setFiles(e.target.files);
+              }}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              placeholder="Parkings"
+            />
+          </label>
           <p className="text-red-700">{imageUploadError && imageUploadError}</p>
-          {listingData.imageUrls.length > 0 &&
-            listingData.imageUrls.map((url, index) => (
-              <div key={url} className="flex justify-between border p-3">
-                <img
-                  src={url}
-                  alt="listing image"
-                  className="w-20 h-20 object-contain rounded-lg"
-                />
-                <button
-                  type="button"
-                  onClick={() => handleDeleteImage(index)}
-                  className="text-red-700 uppercase hover:opacity-75"
-                >
-                  Delete
-                </button>
-              </div>
-            ))}
+          {listingData.imageUrls.length > 0 && (
+            <ImageCarousel
+              images={listingData.imageUrls}
+              handleClick={handleDeleteImage}
+            />
+          )}
         </div>
       </form>
     </div>

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import ImageCountButton from "../components/Listing/Button/ImageCountButton";
 import ImageMoveButtons from "../components/Listing/Button/ImageMoveButtons";
-import FullScreenGallery from "../components/Listing/FullScreenGallery";
+import FullScreenGallery from "../components/FullScreenGallery";
 import PreviewGallery from "../components/Listing/PreviewGallery";
 import Banner from "../components/Listing/Banner";
 import Reveal from "../components/Listing/Animate/Reveal";
@@ -75,7 +75,7 @@ export const Listing = () => {
         <FullScreenGallery
           handleClose={handleHideFullScreenGallery}
           handleImageChange={handleImageChange}
-          listingData={listingData}
+          images={listingData.imageUrls}
           imageIndex={imageIndex}
         />
       )}

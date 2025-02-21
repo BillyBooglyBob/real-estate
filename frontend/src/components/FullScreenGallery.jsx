@@ -3,13 +3,15 @@ import {
   IoIosArrowRoundBack,
   IoMdClose,
 } from "react-icons/io";
+import { MdDelete } from "react-icons/md";
 import { useEffect, useState } from "react";
 
 const FullScreenGallery = ({
   handleClose,
-  listingData,
+  images,
   imageIndex,
   handleImageChange,
+  handleDelete,
 }) => {
   const [mouseMove, setMouseMove] = useState(false);
 
@@ -61,7 +63,7 @@ const FullScreenGallery = ({
           className="w-full h-full flex transition-transform duration-300 ease-in-out"
           style={{ transform: `translateX(-${imageIndex * 100}%)` }}
         >
-          {listingData.imageUrls?.map((url, index) => (
+          {images.map((url, index) => (
             <img
               key={index}
               src={url}
@@ -87,18 +89,21 @@ const FullScreenGallery = ({
           className={`font-noto absolute top-0 left-0 text-lg text-[#ccc] 
             w-24 h-16 flex justify-center items-center`}
         >
-          {imageIndex + 1} / {listingData.imageUrls?.length}
+          {imageIndex + 1} / {images.length}
         </div>
 
         {/* Exit button */}
-        <button
-          className={`absolute top-0 right-0 text-white bg-gray-600  w-12 h-12
-            flex justify-center items-center`}
-          onClick={handleClose}
-          title="Close"
+        <div
+          className={`absolute top-0 right-0 text-white   w-24 h-12
+            flex justify-center items-center gap-2`}
         >
-          <IoMdClose className="w-5 h-5" />
-        </button>
+          <button type="button" onClick={handleDelete} title="Delete" className="bg-gray-600 h-full w-full flex-1 flex justify-center items-center">
+            <MdDelete className="w-5 h-5" />
+          </button>
+          <button type="button" onClick={handleClose} title="Close" className="bg-gray-600 h-full w-full flex-1 flex justify-center items-center">
+            <IoMdClose className="w-5 h-5" />
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -109,6 +114,7 @@ export default FullScreenGallery;
 const ImageNavigation = ({ direction, handleClick }) => {
   return (
     <button
+      type="button"
       className={`absolute top-1/2 ${
         direction === "prev" ? "left-4" : "right-10"
       } hover:brightness-125 w-16 h-16
