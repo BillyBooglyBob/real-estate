@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
 import Listing from "../models/listing.model.js"
 import User from "../models/user.model.js"
+import getOrSetCache from "../utils/redis.js"
 
 // Create a listing
 export const createListing = async (req, res) => {
@@ -26,23 +27,28 @@ export const getListings = async (req, res) => {
         const limit = parseInt(req.query.limit) || 4
         const startIndex = parseInt(req.query.startIndex) || 0
 
-        const query = {
-            address: { $regex: searchTerm, $options: 'i' },
-            type
-        };
+        const cacheKey = `${searchTerm}-${type}-${sort}-${order}-${limit}-${startIndex}`
+        const data = await getOrSetCache(cacheKey, async () => {
+            const query = {
+                address: { $regex: searchTerm, $options: 'i' },
+                type
+            };
 
-        const listings = await Listing.find(query)
-            .sort({ [sort]: order })
-            .limit(limit)
-            .skip(startIndex)
+            const listings = await Listing.find(query)
+                .sort({ [sort]: order })
+                .limit(limit)
+                .skip(startIndex)
 
-        const totalListings = await Listing.countDocuments(query)
+            const totalListings = await Listing.countDocuments(query)
 
-        return res.status(200).json({
-            listings,
-            totalListings,
-            totalPages: Math.ceil(totalListings / limit)
+            return {
+                listings,
+                totalListings,
+                totalPages: Math.ceil(totalListings / limit)
+            }
         })
+
+        return res.status(200).json(data)
     } catch (error) {
         res.status(500).json({ error: error })
     }
@@ -53,37 +59,42 @@ export const getListing = async (req, res) => {
     try {
         const listingID = req.params.id;
 
-        // Check if the id is a valid MongoDB ObjectId
-        if (!mongoose.Types.ObjectId.isValid(listingID)) {
-            return res.status(404).json({ error: 'Invalid ID' });
-        }
+        const cacheKey = `listing-${listingID}`;
+        const data = await getOrSetCache(cacheKey, async () => {
+            // Check if the id is a valid MongoDB ObjectId
+            if (!mongoose.Types.ObjectId.isValid(listingID)) {
+                return res.status(404).json({ error: 'Invalid ID' });
+            }
 
-        const listing = await Listing.findById(listingID).lean(); // Convert to plain object
+            const listing = await Listing.findById(listingID).lean(); // Convert to plain object
 
-        if (!listing) {
-            return res.status(404).json({ error: 'Listing does not exist' });
-        }
+            if (!listing) {
+                return res.status(404).json({ error: 'Listing does not exist' });
+            }
 
-        // Get seller details
-        const seller = await User.findById(listing.seller).lean(); // Convert to plain object
+            // Get seller details
+            const seller = await User.findById(listing.seller).lean(); // Convert to plain object
 
-        // Format ObjectId and Date fields
-        const formattedListing = {
-            ...listing,
-            _id: listing._id.toString(), // Convert ObjectId to string
-            createdAt: listing.createdAt.toISOString(), // Convert Date to string
-            updatedAt: listing.updatedAt.toISOString(),
-            seller: seller
-                ? {
-                    ...seller,
-                    _id: seller._id.toString(),
-                    createdAt: seller.createdAt.toISOString(),
-                    updatedAt: seller.updatedAt.toISOString(),
-                }
-                : null,
-        };
+            // Format ObjectId and Date fields
+            const formattedListing = {
+                ...listing,
+                _id: listing._id.toString(), // Convert ObjectId to string
+                createdAt: listing.createdAt.toISOString(), // Convert Date to string
+                updatedAt: listing.updatedAt.toISOString(),
+                seller: seller
+                    ? {
+                        ...seller,
+                        _id: seller._id.toString(),
+                        createdAt: seller.createdAt.toISOString(),
+                        updatedAt: seller.updatedAt.toISOString(),
+                    }
+                    : null,
+            };
 
-        res.status(200).json(formattedListing);
+            return formattedListing
+        })
+
+        res.status(200).json(data);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -95,17 +106,23 @@ export const getUserListings = async (req, res) => {
     try {
         const userEmail = req.params.email
 
-        // get the id of the user
-        const userId = await User.findOne({ email: userEmail }).select('id')
+        const cacheKey = `user-listings-${userEmail}`
+        const data = await getOrSetCache(cacheKey, async () => {
+            // get the id of the user
+            const userId = await User.findOne({ email: userEmail }).select('id')
 
-        // get the listings of the user
-        const userListings = await Listing.find({ seller: userId._id })
+            // get the listings of the user
+            const userListings = await Listing.find({ seller: userId._id })
 
-        res.status(200).json({ email: userEmail, listings: userListings })
+            return {
+                email: userEmail, listings: userListings
+            }
+        })
+
+        res.status(200).json(data)
     } catch (error) {
         res.status(500).json({ error: error.message })
     }
-
 }
 
 // deletes the listing with the id provided
