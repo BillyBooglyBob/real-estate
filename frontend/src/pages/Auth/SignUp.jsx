@@ -1,7 +1,8 @@
-import AuthForm from "../components/AuthForm";
+import AuthForm from "../../components/AuthForm";
 
-export const SignIn = () => {
+export const SignUp = () => {
   const inputs = [
+    { type: "text", placeholder: "Username", id: "username" },
     { type: "text", placeholder: "Email", id: "email" },
     { type: "password", placeholder: "Password", id: "password" },
   ];
@@ -9,8 +10,8 @@ export const SignIn = () => {
   return (
     <AuthForm
       inputs={inputs}
-      title={"sign in"}
-      actionUrl={"/api/auth/sign-in"}
+      title={"sign up"}
+      actionUrl={"/api/auth/sign-up"}
     />
   );
 };

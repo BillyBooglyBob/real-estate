@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { scrollToTopOfPage } from "../util/util";
+import { scrollToTopOfPage } from "../../util/util";
 
 export const Pagination = ({
   listingsProperties,

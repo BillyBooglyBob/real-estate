@@ -16,7 +16,7 @@ const PreviewGallery = ({ images, handleDeleteImage }) => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full h-full">
       {showFullScreenGallery && (
         <FullScreenGallery
           handleClose={() => setShowFullScreenGallery(false)}

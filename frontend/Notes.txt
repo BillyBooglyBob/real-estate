@@ -2,8 +2,6 @@
     - Home page scroll animation
     - Listing
         - add contact form
-    - ViewListings
-        - add edit listing path 
 - caching
     - Redux (not sure if possible)
     - Redis

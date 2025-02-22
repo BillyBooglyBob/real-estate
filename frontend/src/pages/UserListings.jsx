@@ -11,9 +11,11 @@ import { FaCarAlt } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { MdEditNote } from "react-icons/md";
 import { MdViewStream } from "react-icons/md";
+import { PiHouseLine } from "react-icons/pi";
+
 import PreviewGallery from "../components/Gallery/PreviewGallery";
 
-export const ViewListings = () => {
+export const UserListings = () => {
   // Get all the listings of the current logged in user
   const navigate = useNavigate();
   const [listings, setListings] = useState([]);
@@ -37,11 +39,6 @@ export const ViewListings = () => {
     getUserListings();
   }, [userEmail]);
 
-  // when user click on a listing, bring to the actual listings page
-  const checkListing = (id) => {
-    navigate(`/listings/${id}`);
-  };
-
   // deletes the listing
   const handleDeleteListing = async (id) => {
     try {
@@ -56,7 +53,18 @@ export const ViewListings = () => {
     <div className="p-14 bg-[#faf9f2] w-full h-full">
       <h1 className="mb-5 text-3xl font-tenor">User Listings</h1>
       {/* User listings */}
-      {listings.length === 0 && <div>No listings</div>}
+      {listings.length === 0 && (
+        <div className="flex flex-col items-center justify-center gap-5 text-5xl">
+          <PiHouseLine />
+          <h1>No listings</h1>
+          <button
+            onClick={() => navigate("/listings/create")}
+            className="mt-10 border-black border px-3 py-4 text-2xl rounded-sm hover:bg-black hover:text-white transition-colors duration-200 ease-in-out"
+          >
+            Create a listing
+          </button>
+        </div>
+      )}
       <div className="grid grid-cols-2 gap-5">
         {listings.map((listing) => (
           <div
@@ -64,7 +72,9 @@ export const ViewListings = () => {
             className="flex flex-col justify-between gap-5 w-full h-full p-5 mb-5 border border-gray-700 rounded-sm"
           >
             {/* Listing images */}
-            <PreviewGallery images={listing.imageUrls} />
+            <div className="h-[400px]">
+              <PreviewGallery images={listing.imageUrls} />
+            </div>
 
             {/* Listing details */}
             <div className="grid grid-cols-2 gap-5">
@@ -102,13 +112,16 @@ export const ViewListings = () => {
             {/* View, Edit, Delete buttons */}
             <div className={buttonStyle.container}>
               <MenuButton
-                handleClick={() => checkListing(listing._id)}
+                handleClick={() => navigate(`/listings/${listing._id}`)}
                 title="View Listing"
               >
                 <MdViewStream />
               </MenuButton>
 
-              <MenuButton title="Edit Listing">
+              <MenuButton
+                handleClick={() => navigate(`/listings/edit/${listing._id}`)}
+                title="Edit Listing"
+              >
                 <MdEditNote />
               </MenuButton>
 

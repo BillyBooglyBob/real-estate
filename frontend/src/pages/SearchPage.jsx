@@ -3,8 +3,8 @@ import { CiSearch } from "react-icons/ci";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ListingItem from "../components/ListingItem";
-import { Pagination } from "../components/Pagination";
-import SearchFilter from "../components/SearchFilter.jsx";
+import { Pagination } from "../components/SearchPage/Pagination";
+import SearchFilter from "../components/SearchPage/SearchFilter";
 
 export const SearchPage = () => {
   const navigate = useNavigate();
@@ -115,7 +115,7 @@ export const SearchPage = () => {
   };
 
   return (
-    <div className="min-h-72 mt-10 px-28">
+    <div className="min-h-72 my-10 px-28">
       {/* Search input and filters */}
       <form
         onSubmit={handleSubmit}

@@ -29,13 +29,15 @@ const ImageCarousel = ({ images, handleClick }) => {
       {images.map((url, index) => (
         <div
           key={url}
-          onClick={() => {
-            setImageIndex(index);
-            setShowFullScreenGallery(true);
-          }}
           className="flex justify-between border p-3 cursor-pointer"
         >
-          <div className="w-36 h-36 overflow-hidden">
+          <div
+            onClick={() => {
+              setImageIndex(index);
+              setShowFullScreenGallery(true);
+            }}
+            className="w-36 h-36 overflow-hidden"
+          >
             <motion.img
               src={url}
               alt="listing image"

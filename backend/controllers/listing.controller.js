@@ -115,7 +115,7 @@ export const deleteListing = async (req, res) => {
 
         // verify the id
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(4040).json({ error: 'Invalid ID' })
+            return res.status(404).json({ error: 'Invalid ID' })
         }
 
         const listingDeleted = await Listing.findByIdAndDelete(id)
@@ -130,11 +130,21 @@ export const deleteListing = async (req, res) => {
 export const updateListing = async (req, res) => {
     try {
         const id = req.params.id
+
         // use the current signed in user's id as the seller
         const inputs = { ...req.body, seller: req.user.id }
-        const newListing = await Listing.createNewListing(inputs)
 
-        res.status(200).json(newListing)
+        const updatedListing = await Listing.findOneAndUpdate(
+            { _id: id },
+            inputs,
+            { new: true, runValidators: true }
+        )
+
+        if (!updatedListing) {
+            return res.status(404).json({ error: 'Listing not found' })
+        }
+
+        res.status(200).json(updatedListing)
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
