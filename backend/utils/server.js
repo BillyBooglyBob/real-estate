@@ -5,6 +5,8 @@ import authRouter from "../routes/auth.route.js";
 import listingRouter from "../routes/listing.route.js";
 import path from "path";
 import { client as redisClient } from "./redis.js"
+import dotenv from "dotenv";
+dotenv.config();
 
 // creates the server with all the middlewares and routers
 const createServer = () => {

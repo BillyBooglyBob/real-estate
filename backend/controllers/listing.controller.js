@@ -80,6 +80,7 @@ export const getListings = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 // Get a single listing by its id
 export const getListing = async (req, res) => {
   try {
