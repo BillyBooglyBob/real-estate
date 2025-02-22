@@ -2,26 +2,45 @@ import Redis from 'redis';
 
 const DEFAULT_EXPIRATION = 3600;
 
-// Create Redis client with options
+// Production Redis URL (example: redis://default:password@redis-instance.render.com:6379)
+const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+
 const client = Redis.createClient({
-  url: process.env.REDIS_URL || 'redis://localhost:6379'
+  url: REDIS_URL,
+  socket: {
+    reconnectStrategy: (retries) => {
+      // Exponential backoff: wait longer between each retry
+      return Math.min(retries * 50, 1000);
+    }
+  }
 });
 
-// Connect to Redis
-client.connect().catch(console.error);
+// Enhanced error handling and logging
+client.on('error', err => {
+  console.error('Redis Client Error:', err);
+  // Don't crash the application on Redis errors
+});
 
-// Error handling
-client.on('error', err => console.error('Redis Client Error:', err));
 client.on('connect', () => console.log('Redis Client Connected'));
-client.on('ready', () => console.log('Redis Client Ready'));
+client.on('ready', () => console.log(`Redis Client Ready - Connected to ${REDIS_URL}`));
 client.on('reconnecting', () => console.log('Redis Client Reconnecting'));
 client.on('end', () => console.log('Redis Client Connection Ended'));
 
+// Connect with retry logic
+const connectRedis = async () => {
+  try {
+    await client.connect();
+  } catch (err) {
+    console.error('Failed to connect to Redis:', err);
+    // Optional: implement retry logic here if needed
+  }
+};
+
 const getOrSetCache = async (key, cb) => {
   try {
-    // Check if client is connected
+    // Ensure connection
     if (!client.isOpen) {
-      await client.connect();
+      await connectRedis();
     }
 
     // Get data from cache
@@ -32,16 +51,19 @@ const getOrSetCache = async (key, cb) => {
 
     // If no cache, get fresh data
     const freshData = await cb();
-
+    
     // Set cache with expiration
     await client.setEx(key, DEFAULT_EXPIRATION, JSON.stringify(freshData));
-
+    
     return freshData;
   } catch (error) {
     console.error('Redis Cache Error:', error);
-    // If Redis fails, fallback to direct callback
+    // Fallback to direct callback if Redis fails
     return await cb();
   }
 };
+
+// Initialize connection
+connectRedis();
 
 export { getOrSetCache, client };

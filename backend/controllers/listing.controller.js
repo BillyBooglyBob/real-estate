@@ -5,154 +5,179 @@ import { getOrSetCache } from "../utils/redis.js"
 
 // Create a listing
 export const createListing = async (req, res) => {
-    try {
-        // use the current signed in user's id as the seller
-        const inputs = { ...req.body, seller: req.user.id }
-        const newListing = await Listing.createNewListing(inputs)
+  try {
+    // use the current signed in user's id as the seller
+    const inputs = { ...req.body, seller: req.user.id }
+    const newListing = await Listing.createNewListing(inputs)
 
-        res.status(200).json(newListing)
-    } catch (error) {
-        res.status(400).json({ error: error.message })
-    }
+    res.status(200).json(newListing)
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
 }
 
 // Get listings based on search parameters
 export const getListings = async (req, res) => {
+  try {
+    const searchTerm = req.query.searchTerm || '';
+    const type = req.query.type || 'Sell';
+    const sort = req.query.sort || 'createdAt';
+    const order = req.query.order || 'desc';
+    const limit = parseInt(req.query.limit) || 4;
+    const startIndex = parseInt(req.query.startIndex) || 0;
+
+    const cacheKey = `listings:${searchTerm}-${type}-${sort}-${order}-${limit}-${startIndex}`;
+
+
+    let data;
     try {
-        const searchTerm = req.query.searchTerm || '';
-        const type = req.query.type || 'Sell';
-        const sort = req.query.sort || 'createdAt';
-        const order = req.query.order || 'desc';
-        const limit = parseInt(req.query.limit) || 4;
-        const startIndex = parseInt(req.query.startIndex) || 0;
+      data = await getOrSetCache(cacheKey, async () => {
+        const query = {
+          address: { $regex: searchTerm, $options: 'i' },
+          type
+        };
 
-        const cacheKey = `listings:${searchTerm}-${type}-${sort}-${order}-${limit}-${startIndex}`;
+        const [listings, totalListings] = await Promise.all([
+          Listing.find(query)
+            .sort({ [sort]: order })
+            .limit(limit)
+            .skip(startIndex),
+          Listing.countDocuments(query)
+        ]);
 
-        const data = await getOrSetCache(cacheKey, async () => {
-            const query = {
-                address: { $regex: searchTerm, $options: 'i' },
-                type
-            };
+        return {
+          listings,
+          totalListings,
+          totalPages: Math.ceil(totalListings / limit)
+        };
+      });
+    } catch (cacheError) {
+      console.error('Cache error, falling back to direct database query:', cacheError);
+      // Fallback to direct database query
+      const query = {
+        address: { $regex: searchTerm, $options: 'i' },
+        type
+      };
 
-            const [listings, totalListings] = await Promise.all([
-                Listing.find(query)
-                    .sort({ [sort]: order })
-                    .limit(limit)
-                    .skip(startIndex),
-                Listing.countDocuments(query)
-            ]);
+      const [listings, totalListings] = await Promise.all([
+        Listing.find(query)
+          .sort({ [sort]: order })
+          .limit(limit)
+          .skip(startIndex),
+        Listing.countDocuments(query)
+      ]);
 
-            return {
-                listings,
-                totalListings,
-                totalPages: Math.ceil(totalListings / limit)
-            };
-        });
-
-        return res.status(200).json(data);
-    } catch (error) {
-        console.error('Listing Error:', error);
-        res.status(500).json({ error: error.message });
+      data = {
+        listings,
+        totalListings,
+        totalPages: Math.ceil(totalListings / limit)
+      };
     }
+
+    return res.status(200).json(data);
+  } catch (error) {
+    console.error('Listing Error:', error);
+    res.status(500).json({ error: error.message });
+  }
 };
 // Get a single listing by its id
 export const getListing = async (req, res) => {
-    try {
-        const listingID = req.params.id;
+  try {
+    const listingID = req.params.id;
 
-        // Check if the id is a valid MongoDB ObjectId
-        if (!mongoose.Types.ObjectId.isValid(listingID)) {
-            return res.status(404).json({ error: 'Invalid ID' });
-        }
-
-        const listing = await Listing.findById(listingID).lean(); // Convert to plain object
-
-        if (!listing) {
-            return res.status(404).json({ error: 'Listing does not exist' });
-        }
-
-        // Get seller details
-        const seller = await User.findById(listing.seller).lean(); // Convert to plain object
-
-        // Format ObjectId and Date fields
-        const formattedListing = {
-            ...listing,
-            _id: listing._id.toString(), // Convert ObjectId to string
-            createdAt: listing.createdAt.toISOString(), // Convert Date to string
-            updatedAt: listing.updatedAt.toISOString(),
-            seller: seller
-                ? {
-                    ...seller,
-                    _id: seller._id.toString(),
-                    createdAt: seller.createdAt.toISOString(),
-                    updatedAt: seller.updatedAt.toISOString(),
-                }
-                : null,
-        };
-
-        res.status(200).json(formattedListing);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    // Check if the id is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(listingID)) {
+      return res.status(404).json({ error: 'Invalid ID' });
     }
+
+    const listing = await Listing.findById(listingID).lean(); // Convert to plain object
+
+    if (!listing) {
+      return res.status(404).json({ error: 'Listing does not exist' });
+    }
+
+    // Get seller details
+    const seller = await User.findById(listing.seller).lean(); // Convert to plain object
+
+    // Format ObjectId and Date fields
+    const formattedListing = {
+      ...listing,
+      _id: listing._id.toString(), // Convert ObjectId to string
+      createdAt: listing.createdAt.toISOString(), // Convert Date to string
+      updatedAt: listing.updatedAt.toISOString(),
+      seller: seller
+        ? {
+          ...seller,
+          _id: seller._id.toString(),
+          createdAt: seller.createdAt.toISOString(),
+          updatedAt: seller.updatedAt.toISOString(),
+        }
+        : null,
+    };
+
+    res.status(200).json(formattedListing);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 
 // get all listings of a user by email
 export const getUserListings = async (req, res) => {
-    try {
-        const userEmail = req.params.email
+  try {
+    const userEmail = req.params.email
 
-        // get the id of the user
-        const userId = await User.findOne({ email: userEmail }).select('id')
+    // get the id of the user
+    const userId = await User.findOne({ email: userEmail }).select('id')
 
-        // get the listings of the user
-        const userListings = await Listing.find({ seller: userId._id })
+    // get the listings of the user
+    const userListings = await Listing.find({ seller: userId._id })
 
-        res.status(200).json({ email: userEmail, listings: userListings })
-    } catch (error) {
-        res.status(500).json({ error: error.message })
-    }
+    res.status(200).json({ email: userEmail, listings: userListings })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
 
 }
 
 // deletes the listing with the id provided
 export const deleteListing = async (req, res) => {
-    try {
-        const id = req.params.id
+  try {
+    const id = req.params.id
 
-        // verify the id
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(404).json({ error: 'Invalid ID' })
-        }
-
-        const listingDeleted = await Listing.findByIdAndDelete(id)
-
-        res.status(200).json({ listing: listingDeleted })
-    } catch (error) {
-        res.status(500).json({ error: error.message })
+    // verify the id
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(404).json({ error: 'Invalid ID' })
     }
+
+    const listingDeleted = await Listing.findByIdAndDelete(id)
+
+    res.status(200).json({ listing: listingDeleted })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
 }
 
 // update the listing
 export const updateListing = async (req, res) => {
-    try {
-        const id = req.params.id
+  try {
+    const id = req.params.id
 
-        // use the current signed in user's id as the seller
-        const inputs = { ...req.body, seller: req.user.id }
+    // use the current signed in user's id as the seller
+    const inputs = { ...req.body, seller: req.user.id }
 
-        const updatedListing = await Listing.findOneAndUpdate(
-            { _id: id },
-            inputs,
-            { new: true, runValidators: true }
-        )
+    const updatedListing = await Listing.findOneAndUpdate(
+      { _id: id },
+      inputs,
+      { new: true, runValidators: true }
+    )
 
-        if (!updatedListing) {
-            return res.status(404).json({ error: 'Listing not found' })
-        }
-
-        res.status(200).json(updatedListing)
-    } catch (error) {
-        res.status(400).json({ error: error.message })
+    if (!updatedListing) {
+      return res.status(404).json({ error: 'Listing not found' })
     }
+
+    res.status(200).json(updatedListing)
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
 }
