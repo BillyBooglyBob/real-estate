@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import homeImage from "../assets/images/home-image.avif";
 import homeIntroBackground from "../assets/images/home-intro-background.webp";
-import InfiniteCarousel from "../components/Home/InfiniteCarousel";
-import ListingsCarousel from "../components/Home/ListingsCarousel";
+import InfiniteCarousel from "../components/Homepage/InfiniteCarousel";
+import ListingsCarousel from "../components/Homepage/ListingsCarousel";
 
 export const Home = () => {
   return (
