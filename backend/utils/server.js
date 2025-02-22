@@ -10,7 +10,7 @@ import { client as redisClient } from "./redis.js"
 const createServer = () => {
   // Establish connection to the database
   mongoose
-    .connect(process.env.DB_URL || "mongodb+srv://williamjys:passwordone@real-estate.gb1qefh.mongodb.net/?retryWrites=true&w=majority&appName=real-estate")
+    .connect(process.env.DB_URL)
     .then(() => {
       console.log("Connected to mongoDB");
     })
