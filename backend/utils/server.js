@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import authRouter from "../routes/auth.route.js";
 import listingRouter from "../routes/listing.route.js";
 import path from "path";
+import { client as redisClient } from "./redis.js"
 
 // creates the server with all the middlewares and routers
 const createServer = () => {
@@ -16,6 +17,12 @@ const createServer = () => {
     .catch((err) => {
       console.log(err);
     });
+
+  // Redis client error handling
+  process.on('SIGINT', async () => {
+    await redisClient.quit();
+    process.exit(0);
+  });
 
   // Gets the current directory, ensures cross platform compatibility
   const __dirname = path.resolve();

@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
 import Listing from "../models/listing.model.js"
 import User from "../models/user.model.js"
+import { getOrSetCache } from "../utils/redis.js"
 
 // Create a listing
 export const createListing = async (req, res) => {
@@ -18,36 +19,42 @@ export const createListing = async (req, res) => {
 // Get listings based on search parameters
 export const getListings = async (req, res) => {
     try {
-        // get search terms and provide default values
-        const searchTerm = req.query.searchTerm || ''
-        const type = req.query.type || 'Sell'
-        const sort = req.query.sort || 'createdAt'
-        const order = req.query.order || 'desc'
-        const limit = parseInt(req.query.limit) || 4
-        const startIndex = parseInt(req.query.startIndex) || 0
+        const searchTerm = req.query.searchTerm || '';
+        const type = req.query.type || 'Sell';
+        const sort = req.query.sort || 'createdAt';
+        const order = req.query.order || 'desc';
+        const limit = parseInt(req.query.limit) || 4;
+        const startIndex = parseInt(req.query.startIndex) || 0;
 
-        const query = {
-            address: { $regex: searchTerm, $options: 'i' },
-            type
-        };
+        const cacheKey = `listings:${searchTerm}-${type}-${sort}-${order}-${limit}-${startIndex}`;
 
-        const listings = await Listing.find(query)
-            .sort({ [sort]: order })
-            .limit(limit)
-            .skip(startIndex)
+        const data = await getOrSetCache(cacheKey, async () => {
+            const query = {
+                address: { $regex: searchTerm, $options: 'i' },
+                type
+            };
 
-        const totalListings = await Listing.countDocuments(query)
+            const [listings, totalListings] = await Promise.all([
+                Listing.find(query)
+                    .sort({ [sort]: order })
+                    .limit(limit)
+                    .skip(startIndex),
+                Listing.countDocuments(query)
+            ]);
 
-        return res.status(200).json({
-            listings,
-            totalListings,
-            totalPages: Math.ceil(totalListings / limit)
-        })
+            return {
+                listings,
+                totalListings,
+                totalPages: Math.ceil(totalListings / limit)
+            };
+        });
+
+        return res.status(200).json(data);
     } catch (error) {
-        res.status(500).json({ error: error })
+        console.error('Listing Error:', error);
+        res.status(500).json({ error: error.message });
     }
-}
-
+};
 // Get a single listing by its id
 export const getListing = async (req, res) => {
     try {
