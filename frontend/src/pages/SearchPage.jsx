@@ -5,6 +5,7 @@ import axios from "axios";
 import ListingItem from "../components/ListingItem";
 import { Pagination } from "../components/SearchPage/Pagination";
 import SearchFilter from "../components/SearchPage/SearchFilter";
+import GoogleMapAddressSearch from "../hooks/GoogleMapAddressSearch";
 
 export const SearchPage = () => {
   const navigate = useNavigate();
@@ -29,19 +30,7 @@ export const SearchPage = () => {
   // change the filters when the corresponding input changes
   const handleSearchBarChange = (e) => {
     e.preventDefault();
-    if (e.target.id === "searchTerm") {
-      setFilters({ ...filters, searchTerm: e.target.value });
-    }
-
-    if (e.target.id === "type") {
-      setFilters({ ...filters, type: e.target.value });
-    }
-
-    if (e.target.id === "sort_order") {
-      const sort = e.target.value.split("_")[0];
-      const order = e.target.value.split("_")[1];
-      setFilters({ ...filters, sort, order });
-    }
+    setFilters((prev) => ({ ...prev, searchTerm: e.target.value }));
   };
 
   const handleSearchFilterChange = (type, value) => {
@@ -50,7 +39,7 @@ export const SearchPage = () => {
     } else {
       const sort = value.split("_")[0];
       const order = value.split("_")[1];
-      setFilters({ ...filters, sort, order });
+      setFilters((prev) => ({ ...prev, sort, order }));
     }
 
     // Change the page number to 0 when the filter changes
@@ -130,17 +119,23 @@ export const SearchPage = () => {
         onSubmit={handleSubmit}
         className="flex flex-col sm:flex-row gap-5 justify-between mt-5 max-h-20"
       >
-        <label className="relative border border-black focus:border-2">
-          <input
-            onChange={handleSearchBarChange}
-            value={filters.searchTerm}
-            placeholder="Search for a property"
-            id="searchTerm"
-            type="text"
-            className="pl-10 w-full min-w-64 sm:min-w-96  p-2"
-          />
-          <CiSearch className="absolute left-3 top-3" />
-        </label>
+        <GoogleMapAddressSearch
+          handleChange={(value) =>
+            setFilters((prev) => ({ ...prev, searchTerm: value }))
+          }
+        >
+          <label className="relative ">
+            <input
+              onChange={handleSearchBarChange}
+              value={filters.searchTerm}
+              placeholder="Search for a property"
+              id="searchTerm"
+              type="text"
+              className="pl-10 w-full min-w-64 sm:min-w-96 p-2 border border-gray-600 focus:border-black"
+            />
+            <CiSearch className="absolute left-3 top-1" />
+          </label>
+        </GoogleMapAddressSearch>
         <div className="flex flex-col gap-5 sm:flex-row">
           <SearchFilter
             value={filters.type === "Sell" ? "For sale" : "For rent"}

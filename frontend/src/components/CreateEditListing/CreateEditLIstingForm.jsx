@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import {
   getDownloadURL,
   getStorage,
@@ -6,27 +6,15 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../../firebase";
-import { useJsApiLoader, StandaloneSearchBox } from "@react-google-maps/api";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Input from "./Input";
 import DropDown from "./DropDown";
 import ImageCarousel from "./ImageCarousel";
-
-// Define the libraries to be loaded for the google maps api
-// to prevent useJsApiLoader from reloading unnecessarily
-const googleLibraries = ["places"];
+import GoogleMapAddressSearch from "../../hooks/GoogleMapAddressSearch";
 
 export const CreateEditListingForm = ({ title, currentId, API }) => {
   const navigate = useNavigate();
-
-  // Adding Google Map API address-search functionality
-  const addressRef = useRef(null);
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAP_API,
-    libraries: googleLibraries,
-  });
 
   const [listingData, setListingData] = useState({
     imageUrls: [],
@@ -183,12 +171,6 @@ export const CreateEditListingForm = ({ title, currentId, API }) => {
     }
   }, [files]);
 
-  // handle address change
-  const handleOnPlacesChanged = () => {
-    const newAddress = addressRef.current.getPlaces()[0].formatted_address;
-    setListingData((prev) => ({ ...prev, address: newAddress }));
-  };
-
   return (
     <div className="w-full py-14 mx-auto bg-[#faf9f2] flex flex-col justify-center items-center">
       <h1 className="text-3xl font-tenor text-center mb-3 flex justify-start items-center w-[50%]">
@@ -202,20 +184,20 @@ export const CreateEditListingForm = ({ title, currentId, API }) => {
         {/* Listing details & Create button */}
         <div className="flex flex-col gap-3 flex-[2] h-full">
           {/* Google maps search box */}
-          {isLoaded && (
-            <StandaloneSearchBox
-              onLoad={(ref) => (addressRef.current = ref)}
-              onPlacesChanged={handleOnPlacesChanged}
-            >
-              <Input
-                handleChange={setListingData}
-                inputType="text"
-                placeholder="Address"
-                inputField={listingData.address}
-                inputFieldType="address"
-              />
-            </StandaloneSearchBox>
-          )}
+          <GoogleMapAddressSearch
+            handleChange={(value) =>
+              setListingData((prev) => ({ ...prev, address: value }))
+            }
+          >
+            <Input
+              handleChange={setListingData}
+              inputType="text"
+              placeholder="Address"
+              inputField={listingData.address}
+              inputFieldType="address"
+            />
+          </GoogleMapAddressSearch>
+
           <Input
             handleChange={setListingData}
             placeholder="Description"
