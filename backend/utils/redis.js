@@ -61,40 +61,48 @@ const getOrSetCache = async (key, cb) => {
   }
 };
 
-const deleteCache = async (keys) => {  // Changed to regular async function declaration
+const deleteCache = async (keys) => {
   try {
-    // Ensure connection
     if (!client.isOpen) {
       await connectRedis();
     }
 
-    // Delete cache
+    console.log('Deleting keys:', keys);
+
     const nonWildcardKeys = keys.filter(key => !key.includes('*'));
     const wildcardKeys = keys.filter(key => key.includes('*'));
 
-    // Delete regular keys
+    console.log('Non-wildcard keys:', nonWildcardKeys);
+    console.log('Wildcard keys:', wildcardKeys);
+
     if (nonWildcardKeys.length > 0) {
       await Promise.all(nonWildcardKeys.map(key => client.del(key)));
+      console.log('Deleted non-wildcard keys');
     }
 
-    // Handle wildcard patterns
     for (const pattern of wildcardKeys) {
-      let cursor = '0';
+      console.log('Processing pattern:', pattern);
+      let cursor = 0;
       do {
-        const [nextCursor, keysToDelete] = await client.scan(cursor, {
+        const { cursor: nextCursor, keys: keysToDelete } = await client.scan(cursor, {
           MATCH: pattern,
           COUNT: 100
         });
+
         cursor = nextCursor;
+        console.log('Found keys to delete:', keysToDelete);
 
         if (keysToDelete.length > 0) {
           await client.del(keysToDelete);
+          console.log('Deleted matching keys:', keysToDelete);
         }
-      } while (cursor !== '0');
+      } while (cursor !== 0);
     }
 
   } catch (error) {
     console.error('Redis Cache Error:', error);
+    // Log the full error for debugging
+    console.error(error);
   }
 };
 

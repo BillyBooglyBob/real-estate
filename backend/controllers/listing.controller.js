@@ -16,12 +16,6 @@ export const createListing = async (req, res) => {
     const user = await User.findById(req.user.id)
     deleteCache(['listings:*', `userListings:${user.email}`])
 
-    // Check if user listings are deleted
-    // Retrieve the user email manually
-    console.log("Current user is: ", user.email)
-    console.log("Listings cache deleted: ", await client.get('listings:*'))
-    console.log("User listings cache deleted: ", await client.get(`userListings:${user.email}`))
-
     res.status(200).json(newListing)
   } catch (error) {
     res.status(400).json({ error: error.message })
