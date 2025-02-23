@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { IoIosCheckbox } from "react-icons/io";
-import { motion } from "framer-motion";
 
 const SearchFilter = ({ handleChange, options, value }) => {
   /**
@@ -32,7 +31,10 @@ const SearchFilter = ({ handleChange, options, value }) => {
         {options.map((option, index) => (
           <button
             key={index}
-            onClick={() => handleChange(option.value)}
+            onClick={() => {
+              handleChange(option.value)
+              setIsHidden(true)
+            }}
             className={`h-11 px-4 flex justify-between items-center p-2 ${
               option.text === value && "bg-gray-100"
             } hover:bg-gray-100 transition-all rounded-md duration-100 z-40`}

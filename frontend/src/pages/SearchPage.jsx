@@ -27,7 +27,7 @@ export const SearchPage = () => {
   const [loading, setLoading] = useState(false);
 
   // change the filters when the corresponding input changes
-  const handleChange = (e) => {
+  const handleSearchBarChange = (e) => {
     e.preventDefault();
     if (e.target.id === "searchTerm") {
       setFilters({ ...filters, searchTerm: e.target.value });
@@ -44,6 +44,19 @@ export const SearchPage = () => {
     }
   };
 
+  const handleSearchFilterChange = (type, value) => {
+    if (type === "type") {
+      setFilters({ ...filters, type: value });
+    } else {
+      const sort = value.split("_")[0];
+      const order = value.split("_")[1];
+      setFilters({ ...filters, sort, order });
+    }
+
+    // Change the page number to 0 when the filter changes
+    setListingsProperties((prev) => ({ ...prev, currentPage: 0 }));
+  };
+
   // navigate to the search page again (refresh the page) with the updated query
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -53,13 +66,18 @@ export const SearchPage = () => {
     urlParams.set("type", filters.type);
     urlParams.set("sort", filters.sort);
     urlParams.set("order", filters.order);
+    urlParams.set("limit", listingsProperties.itemsPerPage);
+    urlParams.set(
+      "startIndex",
+      listingsProperties.currentPage * listingsProperties.itemsPerPage
+    );
 
     const searchQuery = urlParams.toString();
 
     navigate(`/listings/search?${searchQuery}`);
   };
 
-  // update filter inputs when the URL changes
+  // update filter inputs when the URL or the current page number changes
   // also fetch new listings based on the new URL
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -71,13 +89,6 @@ export const SearchPage = () => {
     urlParams.set(
       "startIndex",
       listingsProperties.currentPage * listingsProperties.itemsPerPage
-    );
-
-    console.log("limit", listingsProperties.itemsPerPage);
-    console.log("current page", listingsProperties.currentPage);
-    console.log(
-      "urlParams after setting limit & start index",
-      urlParams.toString()
     );
 
     const searchTermFromUrl = urlParams.get("searchTerm");
@@ -97,22 +108,20 @@ export const SearchPage = () => {
 
     const getListings = async () => {
       setLoading(true);
+
       const searchQuery = urlParams.toString();
       console.log("searchQuery", searchQuery);
+
       const res = await axios.get(`/api/listings/search?${searchQuery}`);
       const { listings, totalListings, totalPages } = res.data;
       setListings(listings);
       setListingsProperties((prev) => ({ ...prev, totalListings, totalPages }));
       setLoading(false);
+      console.log("Data fetched", res.data);
     };
 
     getListings();
-  }, [location.search, listingsProperties.currentPage]);
-
-  // when user click on a listing, bring to the actual listings page
-  const checkListing = (id) => {
-    navigate(`/listings/${id}`);
-  };
+  }, [location.search]);
 
   return (
     <div className="min-h-72 my-10 px-28">
@@ -123,7 +132,7 @@ export const SearchPage = () => {
       >
         <label className="relative border border-black focus:border-2">
           <input
-            onChange={handleChange}
+            onChange={handleSearchBarChange}
             value={filters.searchTerm}
             placeholder="Search for a property"
             id="searchTerm"
@@ -135,9 +144,7 @@ export const SearchPage = () => {
         <div className="flex flex-col gap-5 sm:flex-row">
           <SearchFilter
             value={filters.type === "Sell" ? "For sale" : "For rent"}
-            handleChange={(value) =>
-              setFilters((prev) => ({ ...prev, type: value }))
-            }
+            handleChange={(value) => handleSearchFilterChange("type", value)}
             options={[
               { value: "Sell", text: "For sale" },
               { value: "Rent", text: "For rent" },
@@ -153,11 +160,9 @@ export const SearchPage = () => {
                 ? "Newest"
                 : "Oldest"
             }
-            handleChange={(value) => {
-              const sort = value.split("_")[0];
-              const order = value.split("_")[1];
-              setFilters((prev) => ({ ...prev, sort, order }));
-            }}
+            handleChange={(value) =>
+              handleSearchFilterChange("sort_order", value)
+            }
             options={[
               { value: "price_desc", text: "Price: High to Low" },
               { value: "price_asc", text: "Price: Low to High" },
@@ -190,7 +195,7 @@ export const SearchPage = () => {
             listings.map((listing) => (
               <ListingItem
                 listing={listing}
-                checkListing={checkListing}
+                checkListing={(id) => navigate(`/listings/${id}`)}
                 key={listing._id}
                 loading={loading}
               />

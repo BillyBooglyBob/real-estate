@@ -80,7 +80,7 @@ export const Header = () => {
             links={[
               {
                 name: "Latest listings",
-                link: "/listings/search?searchTerm=&type=Sell&sort=created_at&order=desc",
+                link: "/listings/search?searchTerm=&type=Sell&sort=createdAt&order=desc",
               },
             ]}
           />
@@ -89,7 +89,7 @@ export const Header = () => {
             links={[
               {
                 name: "Latest listings",
-                link: "/listings/search?searchTerm=&type=Rent&sort=created_at&order=desc",
+                link: "/listings/search?searchTerm=&type=Rent&sort=createdAt&order=desc",
               },
             ]}
           />

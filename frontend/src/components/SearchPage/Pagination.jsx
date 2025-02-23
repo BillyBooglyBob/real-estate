@@ -1,11 +1,12 @@
-import { useNavigate } from "react-router-dom";
 import { scrollToTopOfPage } from "../../util/util";
+import { useNavigate } from "react-router-dom";
 
 export const Pagination = ({
   listingsProperties,
   handleChangeListingProperties,
 }) => {
-  const { currentPage, totalPages } = listingsProperties;
+  const navigate = useNavigate();
+  const { currentPage, totalPages, itemsPerPage } = listingsProperties;
 
   if (totalPages <= 1) return null;
 
@@ -16,6 +17,13 @@ export const Pagination = ({
       ...prev,
       currentPage: page - 1,
     }));
+
+    // Construct the new URL with the updated currentPage
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("startIndex", (page - 1) * itemsPerPage); // Update startIndex based on page number
+
+    // Update the URL with the new parameters
+    navigate(`/listings/search?${urlParams.toString()}`);
 
     // Scroll function will not work when the new page is
     // the start or end of the list.
