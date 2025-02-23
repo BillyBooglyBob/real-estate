@@ -1,30 +1,72 @@
 import { useJsApiLoader, StandaloneSearchBox } from "@react-google-maps/api";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 
-// Define the libraries to be loaded for the google maps api
-// to prevent useJsApiLoader from reloading unnecessarily
 const googleLibraries = ["places"];
 
 const GoogleMapAddressSearch = ({ children, handleChange }) => {
-  // Adding Google Map API address-search functionality
   const addressRef = useRef(null);
-  const { isLoaded } = useJsApiLoader({
+  const { isLoaded, loadError } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAP_API,
     libraries: googleLibraries,
+    // Adding these options can help with loading reliability
+    version: "weekly",
+    language: "en"
   });
 
+  // Handle cleanup
+  useEffect(() => {
+    return () => {
+      if (addressRef.current) {
+        addressRef.current = null;
+      }
+    };
+  }, []);
+
   const handleOnPlacesChanged = () => {
-    const newAddress = addressRef.current.getPlaces()[0].formatted_address;
-    handleChange(newAddress);
+    try {
+      if (!window.google) {
+        console.error("Google API is not loaded yet.");
+        return;
+      }
+
+      const places = addressRef.current?.getPlaces();
+      if (!places) {
+        console.warn("No places data available");
+        return;
+      }
+
+      if (places.length > 0 && places[0].formatted_address) {
+        handleChange(places[0].formatted_address);
+      } else {
+        console.warn("No valid address found in places data");
+      }
+    } catch (error) {
+      console.error("Error in handleOnPlacesChanged:", error);
+    }
   };
+
+  // Handle loading error
+  if (loadError) {
+    console.error("Error loading Google Maps:", loadError);
+    return <div>Error loading maps</div>;
+  }
+
+  // Show loading state or return null based on your preference
+  if (!isLoaded || !window.google) {
+    return <div>Loading...</div>; // or return null;
+  }
 
   return (
     <StandaloneSearchBox
-      onLoad={(ref) => (addressRef.current = ref)}
+      onLoad={(ref) => {
+        if (ref) {
+          addressRef.current = ref;
+        }
+      }}
       onPlacesChanged={handleOnPlacesChanged}
     >
-      {children}
+      {children || <input type="text" placeholder="Search address..." />}
     </StandaloneSearchBox>
   );
 };
