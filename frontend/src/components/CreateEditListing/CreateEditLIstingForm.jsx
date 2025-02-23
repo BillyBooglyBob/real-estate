@@ -17,7 +17,7 @@ import ImageCarousel from "./ImageCarousel";
 // to prevent useJsApiLoader from reloading unnecessarily
 const googleLibraries = ["places"];
 
-export const CreateEditListingForm = ({ currentId, API }) => {
+export const CreateEditListingForm = ({ title, currentId, API }) => {
   const navigate = useNavigate();
 
   // Adding Google Map API address-search functionality
@@ -192,7 +192,7 @@ export const CreateEditListingForm = ({ currentId, API }) => {
   return (
     <div className="w-full py-14 mx-auto bg-[#faf9f2] flex flex-col justify-center items-center">
       <h1 className="text-3xl font-tenor text-center mb-3 flex justify-start items-center w-[50%]">
-        Create listing
+        {title}
       </h1>
       {/* Listing form */}
       <form

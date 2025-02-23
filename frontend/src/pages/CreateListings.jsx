@@ -6,5 +6,5 @@ export const CreateListings = () => {
     url: "/api/listings",
   };
 
-  return <CreateEditListingForm API={API} />;
+  return <CreateEditListingForm title="Create Listing" API={API} />;
 };

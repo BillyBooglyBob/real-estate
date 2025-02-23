@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
 import Listing from "../models/listing.model.js"
 import User from "../models/user.model.js"
-import { getOrSetCache, client } from "../utils/redis.js"
+import { getOrSetCache, client, deleteCache } from "../utils/redis.js"
 
 // Create a listing
 export const createListing = async (req, res) => {
@@ -14,9 +14,7 @@ export const createListing = async (req, res) => {
     // Invalidate cache
     // For both the general listings and the current user's listings
     const user = await User.findById(req.user.id)
-
-    await client.del('listings:*')
-    await client.del(`userListings:${user.email}`)
+    deleteCache(['listings:*', `userListings:${user.email}`])
 
     // Check if user listings are deleted
     // Retrieve the user email manually
@@ -32,16 +30,16 @@ export const createListing = async (req, res) => {
 
 // Get listings based on search parameters
 export const getListings = async (req, res) => {
+  const searchTerm = req.query.searchTerm || '';
+  const type = req.query.type || 'Sell';
+  const sort = req.query.sort || 'createdAt';
+  const order = req.query.order || 'desc';
+  const limit = parseInt(req.query.limit) || 4;
+  const startIndex = parseInt(req.query.startIndex) || 0;
+
+  const cacheKey = `listings:${searchTerm}-${type}-${sort}-${order}-${limit}-${startIndex}`;
+
   try {
-    const searchTerm = req.query.searchTerm || '';
-    const type = req.query.type || 'Sell';
-    const sort = req.query.sort || 'createdAt';
-    const order = req.query.order || 'desc';
-    const limit = parseInt(req.query.limit) || 4;
-    const startIndex = parseInt(req.query.startIndex) || 0;
-
-    const cacheKey = `listings:${searchTerm}-${type}-${sort}-${order}-${limit}-${startIndex}`;
-
     const query = async () => {
       const query = {
         address: { $regex: searchTerm, $options: 'i' },
@@ -52,7 +50,8 @@ export const getListings = async (req, res) => {
         Listing.find(query)
           .sort({ [sort]: order })
           .limit(limit)
-          .skip(startIndex),
+          .skip(startIndex)
+          .lean(), // Convert to plain object
         Listing.countDocuments(query)
       ]);
 
@@ -63,15 +62,7 @@ export const getListings = async (req, res) => {
       };
     }
 
-    let data;
-    try {
-      data = await getOrSetCache(cacheKey, query);
-    } catch (cacheError) {
-      console.error('Cache error, falling back to direct database query:', cacheError);
-      // Fallback to direct database query
-      data = query()
-    }
-
+    const data = await getOrSetCache(cacheKey, query);
     return res.status(200).json(data);
   } catch (error) {
     console.error('Listing Error:', error);
@@ -81,27 +72,26 @@ export const getListings = async (req, res) => {
 
 // Get a single listing by its id
 export const getListing = async (req, res) => {
+  const listingID = req.params.id;
+  const cacheKey = `listing:${listingID}`;
+
   try {
-    const listingID = req.params.id;
-
-    const cacheKey = `listing:${listingID}`;
-
+    // Define query function
     const query = async () => {
       // Check if the id is a valid MongoDB ObjectId
       if (!mongoose.Types.ObjectId.isValid(listingID)) {
-        return res.status(404).json({ error: 'Invalid ID' });
+        throw new Error('Invalid ID');
       }
 
+      // Get listing details
       const listing = await Listing.findById(listingID).lean(); // Convert to plain object
-
       if (!listing) {
-        return res.status(404).json({ error: 'Listing does not exist' });
+        throw new Error('Listing does not exist');
       }
 
       // Get seller details
       const seller = await User.findById(listing.seller).lean(); // Convert to plain object
 
-      // Format ObjectId and Date fields
       return {
         ...listing,
         _id: listing._id.toString(), // Convert ObjectId to string
@@ -118,35 +108,31 @@ export const getListing = async (req, res) => {
       };
     }
 
-    let data;
-    try {
-      data = await getOrSetCache(cacheKey, query);
-    } catch (cacheError) {
-      console.error('Cache error, falling back to direct database query:', cacheError);
-      // Fallback to direct database query
-      data = query()
-    }
-
+    const data = await getOrSetCache(cacheKey, query);
     res.status(200).json(data);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const status = error.message.includes('Invalid ID') ||
+      error.message.includes('does not exist') ? 404 : 500;
+    return res.status(status).json({ error: error.message });
   }
 };
 
 
 // get all listings of a user by email
 export const getUserListings = async (req, res) => {
+  const userEmail = req.params.email
+  const cacheKey = `userListings:${userEmail}`;
+
   try {
-    const userEmail = req.params.email
-
-    const cacheKey = `userListings:${userEmail}`;
-
     const query = async () => {
       // get the id of the user
       const userId = await User.findOne({ email: userEmail }).select('id')
+      if (!userId) {
+        throw new Error('User not found')
+      }
 
       // get the listings of the user
-      const userListings = await Listing.find({ seller: userId._id })
+      const userListings = await Listing.find({ seller: userId._id }).lean()
 
       return {
         email: userEmail,
@@ -154,20 +140,12 @@ export const getUserListings = async (req, res) => {
       }
     }
 
-    let data;
-    try {
-      data = await getOrSetCache(cacheKey, query)
-    } catch (cacheError) {
-      console.error('Cache error, falling back to direct database query:', cacheError);
-      // Fallback to direct database query
-      data = query()
-    }
-
+    const data = await getOrSetCache(cacheKey, query)
     res.status(200).json(data)
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    const status = error.message === "User not found" ? 404 : 500
+    res.status(status).json({ error: error.message })
   }
-
 }
 
 // deletes the listing with the id provided
@@ -183,17 +161,15 @@ export const deleteListing = async (req, res) => {
     const listingDeleted = await Listing.findByIdAndDelete(id)
 
     // Invalidate cache
-    const user = await User.findById(req.user.id)
+    const user = await User.findById(req.user.id).lean()
+    deleteCache([`listing:${id}`, `userListings:${user.email}`, 'listings:*'])
 
     // Check if user listings are deleted
     // Retrieve the user email manually
-    await client.del('listings:*')
-    await client.del(`userListings:${user.email}`)
-    await client.del(`listing:${id}`)
-
     console.log("Current user is: ", user.email)
     console.log("Listings cache deleted: ", await client.get('listings:*'))
     console.log("User listings cache deleted: ", await client.get(`userListings:${user.email}`))
+    console.log("Listing cache deleted: ", await client.get(`listing:${id}`))
 
     res.status(200).json({ listing: listingDeleted })
   } catch (error) {
@@ -215,22 +191,22 @@ export const updateListing = async (req, res) => {
       { new: true, runValidators: true }
     )
 
+    console.log("Listing ID: ", id)
+
     if (!updatedListing) {
       return res.status(404).json({ error: 'Listing not found' })
     }
 
     // Invalidate cache
     const user = await User.findById(req.user.id)
-
-    await client.del('listings:*')
-    await client.del(`userListings:${req.user.email}`)
-    await client.del(`listing:${id}`)
+    deleteCache([`listing:${id}`, `userListings:${user.email}`, 'listings:*'])
 
     // Check if user listings are deleted
     // Retrieve the user email manually
     console.log("Current user is: ", user.email)
     console.log("Listings cache deleted: ", await client.get('listings:*'))
     console.log("User listings cache deleted: ", await client.get(`userListings:${user.email}`))
+    console.log("Listing cache deleted: ", await client.get(`listing:${id}`))
 
     res.status(200).json(updatedListing)
   } catch (error) {

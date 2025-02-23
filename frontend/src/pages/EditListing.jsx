@@ -9,7 +9,7 @@ const EditListing = () => {
     url: `/api/listings/${id}`,
   };
 
-  return <CreateEditListingForm currentId={id} API={API} />;
+  return <CreateEditListingForm title="Edit Listing" currentId={id} API={API} />;
 };
 
 export default EditListing;
