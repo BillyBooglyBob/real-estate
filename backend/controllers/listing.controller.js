@@ -1,14 +1,28 @@
 import mongoose from "mongoose"
 import Listing from "../models/listing.model.js"
 import User from "../models/user.model.js"
-import { getOrSetCache } from "../utils/redis.js"
+import { getOrSetCache, client } from "../utils/redis.js"
 
 // Create a listing
 export const createListing = async (req, res) => {
   try {
     // use the current signed in user's id as the seller
     const inputs = { ...req.body, seller: req.user.id }
+
     const newListing = await Listing.createNewListing(inputs)
+
+    // Invalidate cache
+    // For both the general listings and the current user's listings
+    const user = await User.findById(req.user.id)
+
+    await client.del('listings:*')
+    await client.del(`userListings:${user.email}`)
+
+    // Check if user listings are deleted
+    // Retrieve the user email manually
+    console.log("Current user is: ", user.email)
+    console.log("Listings cache deleted: ", await client.get('listings:*'))
+    console.log("User listings cache deleted: ", await client.get(`userListings:${user.email}`))
 
     res.status(200).json(newListing)
   } catch (error) {
@@ -168,6 +182,19 @@ export const deleteListing = async (req, res) => {
 
     const listingDeleted = await Listing.findByIdAndDelete(id)
 
+    // Invalidate cache
+    const user = await User.findById(req.user.id)
+
+    // Check if user listings are deleted
+    // Retrieve the user email manually
+    await client.del('listings:*')
+    await client.del(`userListings:${user.email}`)
+    await client.del(`listing:${id}`)
+
+    console.log("Current user is: ", user.email)
+    console.log("Listings cache deleted: ", await client.get('listings:*'))
+    console.log("User listings cache deleted: ", await client.get(`userListings:${user.email}`))
+
     res.status(200).json({ listing: listingDeleted })
   } catch (error) {
     res.status(500).json({ error: error.message })
@@ -191,6 +218,19 @@ export const updateListing = async (req, res) => {
     if (!updatedListing) {
       return res.status(404).json({ error: 'Listing not found' })
     }
+
+    // Invalidate cache
+    const user = await User.findById(req.user.id)
+
+    await client.del('listings:*')
+    await client.del(`userListings:${req.user.email}`)
+    await client.del(`listing:${id}`)
+
+    // Check if user listings are deleted
+    // Retrieve the user email manually
+    console.log("Current user is: ", user.email)
+    console.log("Listings cache deleted: ", await client.get('listings:*'))
+    console.log("User listings cache deleted: ", await client.get(`userListings:${user.email}`))
 
     res.status(200).json(updatedListing)
   } catch (error) {

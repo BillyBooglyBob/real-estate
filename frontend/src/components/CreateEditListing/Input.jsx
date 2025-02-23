@@ -85,6 +85,11 @@ const Input = ({
               ...prev,
               [inputFieldType]: sanitizedValue,
             }));
+          } else if (inputFieldType === "address") {
+            handleChange((prev) => ({
+              ...prev,
+              [inputFieldType]: e.target.value,
+            }));
           } else {
             handleChange((prev) => ({
               ...prev,
