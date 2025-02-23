@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 import Input from "./Input";
 import DropDown from "./DropDown";
 import ImageCarousel from "./ImageCarousel";
-import GoogleMapAddressSearch from "../../hooks/GoogleMapAddressSearch";
+import GoogleMapAddressSearch from "../GoogleMapAddressSearch";
 
 export const CreateEditListingForm = ({ title, currentId, API }) => {
   const navigate = useNavigate();

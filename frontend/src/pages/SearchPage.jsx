@@ -5,7 +5,7 @@ import axios from "axios";
 import ListingItem from "../components/ListingItem";
 import { Pagination } from "../components/SearchPage/Pagination";
 import SearchFilter from "../components/SearchPage/SearchFilter";
-import GoogleMapAddressSearch from "../hooks/GoogleMapAddressSearch";
+import GoogleMapAddressSearch from "../components/GoogleMapAddressSearch";
 
 export const SearchPage = () => {
   const navigate = useNavigate();
