@@ -2,8 +2,5 @@
     - Home page scroll animation
     - Listing
         - add contact form
-- caching
-    - Redux (not sure if possible)
-    - Redis
 
 - should add in project description Redux used to save login details

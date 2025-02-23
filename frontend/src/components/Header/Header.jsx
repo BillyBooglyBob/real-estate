@@ -117,7 +117,6 @@ export const Header = () => {
                 ? [
                     { name: "Sign In", link: "/sign-in" },
                     { name: "Sign Up", link: "/sign-up" },
-                    { name: "Profile", link: "/profile" },
                   ]
                 : [
                     { name: "Create Listing", link: "/listings/create" },

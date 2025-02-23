@@ -4,8 +4,6 @@ dotenv.config();
 
 const DEFAULT_EXPIRATION = 3600;
 
-console.log(process.env.REDIS_PASSWORD)
-
 const client = createClient({
   username: 'default',
   password: process.env.REDIS_PASSWORD,
@@ -18,7 +16,7 @@ const client = createClient({
 // error handling and logging
 client.on('error', err => console.error('Redis Client Error:', err));
 client.on('connect', () => console.log('Redis Client Connected'));
-client.on('ready', () => console.log(`Redis Client Ready - Connected to ${process.env.REDIS_URL}`));
+client.on('ready', () => console.log(`Redis Client Ready`));
 client.on('reconnecting', () => console.log('Redis Client Reconnecting'));
 client.on('end', () => console.log('Redis Client Connection Ended'));
 
