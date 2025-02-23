@@ -46,30 +46,55 @@ const Input = ({
       <input
         type={inputType === "number" ? "number" : "text"}
         className={style}
-        value={!inputField ? "" :
-          inputFieldType === "price"
+        value={
+          !inputField
+            ? ""
+            : inputFieldType === "price"
             ? focused
               ? inputField
               : formatPrice(inputField)
             : inputField
         }
         placeholder=""
-        onChange={
-          inputFieldType === "address" || inputFieldType === "price"
-            ? (e) =>
-                handleChange((prev) => ({
-                  ...prev,
-                  [inputFieldType]: e.target.value,
-                }))
-            : (e) =>
-                handleChange((prev) => ({
-                  ...prev,
-                  specifications: {
-                    ...prev.specifications,
-                    [inputFieldType]: e.target.value,
-                  },
-                }))
-        }
+        onKeyDown={(e) => {
+          if (inputFieldType === "price") {
+            // Allow: Backspace, Delete, Tab, Escape, Enter, Arrow keys
+            if (
+              [
+                "Backspace",
+                "Delete",
+                "Tab",
+                "Escape",
+                "Enter",
+                "ArrowLeft",
+                "ArrowRight",
+              ].includes(e.key)
+            ) {
+              return;
+            }
+            // Prevent non-numeric input (except period for decimals)
+            if (!/[\d.]/.test(e.key)) {
+              e.preventDefault();
+            }
+          }
+        }}
+        onInput={(e) => {
+          if (inputFieldType === "price") {
+            const sanitizedValue = e.target.value.replace(/[^0-9.]/g, ""); // Remove non-numeric characters
+            handleChange((prev) => ({
+              ...prev,
+              [inputFieldType]: sanitizedValue,
+            }));
+          } else {
+            handleChange((prev) => ({
+              ...prev,
+              specifications: {
+                ...prev.specifications,
+                [inputFieldType]: e.target.value,
+              },
+            }));
+          }
+        }}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
       />

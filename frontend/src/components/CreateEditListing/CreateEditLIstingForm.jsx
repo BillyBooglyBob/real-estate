@@ -162,7 +162,7 @@ export const CreateEditListingForm = ({ currentId, API }) => {
       if (API.method === "PUT") {
         res = await axios.put(API.url, listingData);
       } else {
-        res = await axios.post("/api/listings", listingData);
+        res = await axios.post(API.url, listingData);
       }
 
       setLoading(false);
