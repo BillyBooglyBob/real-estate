@@ -16,7 +16,7 @@ const InfiniteCarousel = () => {
         animate={{ x: ["0%", "-50%"] }}
         transition={{
           repeat: Infinity,
-          duration: 15,
+          duration: images.length * 5,
           ease: "linear",
         }}
       >
