@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LOGOUT } from "../../redux/user";
 import axios from "axios";
 import DropDown from "./DropDown";
+import { BUY_LISTING_URL, RENT_LISTING_URL } from "../../util/constants";
 
 export const Header = () => {
   const user = useSelector((state) => state.user.currentUser);
@@ -80,7 +81,7 @@ export const Header = () => {
             links={[
               {
                 name: "Latest listings",
-                link: "/listings/search?searchTerm=&type=Sell&sort=createdAt&order=desc",
+                link: BUY_LISTING_URL,
               },
             ]}
           />
@@ -89,7 +90,7 @@ export const Header = () => {
             links={[
               {
                 name: "Latest listings",
-                link: "/listings/search?searchTerm=&type=Rent&sort=createdAt&order=desc",
+                link: RENT_LISTING_URL,
               },
             ]}
           />

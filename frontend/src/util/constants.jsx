@@ -1,0 +1,2 @@
+export const BUY_LISTING_URL = "/listings/search?searchTerm=&type=Sell&sort=createdAt&order=desc&limit=4&startIndex=0"
+export const RENT_LISTING_URL = "/listings/search?searchTerm=&type=Rent&sort=createdAt&order=desc&limit=4&startIndex=0"
