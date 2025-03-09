@@ -9,7 +9,7 @@ A **full-stack real estate platform** that allows users to browse, search, and f
 - **Advanced Search & Filtering** – Quickly find properties based on price, location, and type.  
 - **Optimized Performance** – Uses **Redis caching** to make backend queries **4× faster**.  
 - **Secure Authentication** – Implements **JWT tokens & HTTP-only cookies** for safe login.  
-- **Interactive Maps** – **Google Maps API integration** for auto-address completion & location display.  
+- **Google Maps API** – **Google Maps API integration** for auto-address completion.  
 - **Image Upload & Storage** – Uses **Firebase** for efficient image management.  
 - **Fully Tested Backend** – All APIs tested with **Postman** for reliability.  
 
