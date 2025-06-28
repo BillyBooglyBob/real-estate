@@ -4,9 +4,11 @@ dotenv.config();
 
 const DEFAULT_EXPIRATION = 60 * 10; // cache valid for 10 minutes
 
+console.log("Redis password:", process.env.REDIS_PASSWORD);
 const client = createClient({
   username: 'default',
-  password: process.env.REDIS_PASSWORD,
+  // password: process.env.REDIS_PASSWORD,
+  password: "qdMBeppsCUBAgwlzmYKhWFI4LzDB06OC",
   socket: {
     host: 'redis-17459.c16.us-east-1-3.ec2.redns.redis-cloud.com',
     port: 17459
